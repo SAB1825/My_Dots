@@ -2,7 +2,7 @@ import QtQuick
 import QtQuick.Controls
 import "Singletons"
 
-// Adapter for Ricelin's 17px vector status icon in the existing bar layout.
+// Adapter for Sabari's 17px vector status icon in the existing bar layout.
 Item {
     id: button
     property string glyph

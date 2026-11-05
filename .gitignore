@@ -12,10 +12,11 @@ __pycache__/
 .cache/
 node_modules/
 backups/
-quickshell/.config/quickshell/minimal/generated/
+/config/quickshell/minimal/generated/
 
 # Keep Neovim local until it is ready to publish.
 /nvim/
+/config/nvim/
 
 # Historical configuration snapshots.
 .backup/

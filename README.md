@@ -1,41 +1,62 @@
-# My Arch dotfiles
+# Sabari’s dotfiles
 
-Hyprland, Quickshell, and Zsh configurations, organized as GNU Stow packages.
+Hyprland, Quickshell, and Zsh configuration for Arch Linux.
 
-## Install
-
-```sh
-sudo pacman -S --needed git stow
-git clone https://github.com/SAB1825/My_Dots.git ~/dotfiles
-cd ~/dotfiles
-stow --simulate --verbose --target="$HOME" hypr quickshell zsh
-stow --target="$HOME" hypr quickshell zsh
+```text
+config/
+  hypr/                 Hyprland configuration and Lua modules
+  quickshell/minimal/   Bar, launcher, themes, and panels
+.zshrc                  Zsh configuration
+packages/               Installed package inventories
 ```
 
-Back up existing config files and move them aside before applying Stow links. Stow will report conflicts if they remain. This repository initially contains snapshots; existing live configs are unchanged until you replace them with links.
+Neovim is intentionally excluded.
+
+## Setup
+
+```sh
+git clone git@github.com:SAB1825/My_Dots.git ~/dotfiles
+cd ~/dotfiles
+```
+
+The repository contains copies of the configs. Back up and move aside your existing
+`~/.config/hypr`, `~/.config/quickshell`, and `~/.zshrc` before creating these links:
+
+```sh
+mkdir -p "$HOME/.config"
+ln -s "$HOME/dotfiles/config/hypr" "$HOME/.config/hypr"
+ln -s "$HOME/dotfiles/config/quickshell" "$HOME/.config/quickshell"
+ln -s "$HOME/dotfiles/.zshrc" "$HOME/.zshrc"
+```
+
+After linking, edits to your active configs also appear in this repository.
+The repository reorganization itself does not change your active configuration.
 
 ## Dependencies
 
-`packages/official.txt` lists explicitly installed official packages; `packages/aur.txt` lists explicitly installed foreign packages. Review both before installing; these are machine inventories, not minimal requirements. AUR packages need separate review and installation.
+`packages/official.txt` and `packages/aur.txt` are machine inventories, not minimal
+requirements. Review them before installing packages.
 
-Neovim configuration is intentionally excluded for now.
+Hyprland uses its Lua API and needs a compatible build. Adjust monitor settings in
+`config/hypr/modules/display.lua` for your machine.
 
-Hyprland configuration uses the Lua API and requires a compatible Hyprland build. Check monitor configuration in `hypr/.config/hypr/modules/display.lua` for your machine.
+See [Quickshell setup](config/quickshell/minimal/README.md) and
+[theme setup](config/quickshell/minimal/THEMES.md). Generated themes, local state,
+wallpapers, caches, and historical backups are excluded.
 
-See [Quickshell setup](quickshell/.config/quickshell/minimal/README.md) and [theme setup](quickshell/.config/quickshell/minimal/THEMES.md). Generated themes, local state, wallpapers, caches, and historical backups are excluded. Generate a theme using the documented theme CLI after installation. Third-party Ricelin license files are preserved.
+The `sabari/` panel components are adapted from Ricelin, rather than a separate
+Ricelin configuration. Upstream MIT licenses and attribution are retained.
 
 ## Update
-
-When the configs are linked with Stow, edit them normally, then:
 
 ```sh
 cd ~/dotfiles
 git status
-git add hypr # choose the package you changed
+git add config .zshrc
 git diff --cached --check
 git diff --cached
-git commit -m "feat(hypr): describe the change"
+git commit -m "Update configs"
 git push
 ```
 
-Keep secrets in untracked local files and review staged changes before every commit.
+Keep secrets in untracked local files and review staged changes before committing.
