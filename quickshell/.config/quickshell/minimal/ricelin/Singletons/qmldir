@@ -1,0 +1,6 @@
+singleton Theme Theme.qml
+singleton Flags Flags.qml
+singleton Motion Motion.qml
+singleton Sound Sound.qml
+singleton Cava Cava.qml
+singleton Players Players.qml

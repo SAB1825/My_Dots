@@ -1,0 +1,21 @@
+__pycache__/
+*.py[cod]
+*.swp
+*.swo
+*~
+.DS_Store
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+.cache/
+node_modules/
+backups/
+quickshell/.config/quickshell/minimal/generated/
+
+# Keep Neovim local until it is ready to publish.
+/nvim/
+
+# Historical configuration snapshots.
+.backup/
