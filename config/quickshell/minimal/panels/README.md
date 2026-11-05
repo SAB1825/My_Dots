@@ -1,4 +1,4 @@
-# Sabari session and sound panels
+# Session and sound panels
 
 Adapted from `Downloads/Ricelin-main.zip`, `configs/quickshell/pill/`.
 The upstream MIT license is retained in `LICENSE`.
@@ -16,9 +16,9 @@ Local integration changes:
 - Lock uses `loginctl lock-session`; an active session locker must handle it.
 - The sound header's media button plays/pauses through `playerctl`.
 - EQ and mic filter configs are in `audio/`; systemd unit names use
-  `minimal-sabari-eq` and `minimal-sabari-mic`.
-- Sound settings live in `$XDG_STATE_HOME/quickshell/minimal/sabari/sound.json`
-  (normally `~/.local/state/quickshell/minimal/sabari/sound.json`).
+  `minimal-audio-eq` and `minimal-audio-mic`.
+- Sound settings live in `$XDG_STATE_HOME/quickshell/minimal/panels/sound.json`
+  (normally `~/.local/state/quickshell/minimal/panels/sound.json`).
 - EQ and microphone noise filtering start disabled. The noise-filter switch
   requires the RNNoise LADSPA plugin. AutoEQ downloads profiles when requested.
 

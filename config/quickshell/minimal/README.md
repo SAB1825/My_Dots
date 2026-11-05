@@ -14,8 +14,8 @@ Escape or clicking outside closes panels.
 - Landscape wallpaper filmstrip: scroll/drag/arrows to browse; click the selected
   card or press Enter to apply. Local images come from ~/Pictures/Wallpapers.
 - Five shared themes: Catppuccin Mocha, Monochrome, Gruvbox Dark, Nord, Dynamic.
-- MPRIS/CAVA playback and Sabari session/sound panels, including EQ, app volumes,
-  output routing and microphone controls. See [sabari/README.md](sabari/README.md).
+- MPRIS/CAVA playback and session/sound panels, including EQ, app volumes,
+  output routing and microphone controls. See [panels/README.md](panels/README.md).
 
 See [THEMES.md](THEMES.md) for application integrations, generated Neovim colors,
 file locations, validation, backup and theme CLI details.
@@ -39,7 +39,7 @@ upstream flame animation are not included. Backups are under backups/.
 - `Theme.qml`, `Chip.qml`, `IslandButton.qml`, `ThemePreview.qml`: shared styling and UI.
 - `backend.py`: system command adapter; `theming.py`: theme generation and application.
 - `lib/`: launcher helpers and their license; `tests/`: theme regression tests.
-- `sabari/`: adapted reference panels, shared controls and isolated audio state.
+- `panels/`: adapted reference panels, shared controls and isolated audio state.
 - `generated/`: generated theme artifacts; `backups/`: historical configuration copies.
 
 Views receive the shared `ShellState` through a typed `controller` property.

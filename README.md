@@ -44,7 +44,7 @@ See [Quickshell setup](config/quickshell/minimal/README.md) and
 [theme setup](config/quickshell/minimal/THEMES.md). Generated themes, local state,
 wallpapers, caches, and historical backups are excluded.
 
-The `sabari/` panel components are adapted from Ricelin, rather than a separate
+The `panels/` panel components are adapted from Ricelin, rather than a separate
 Ricelin configuration. Upstream MIT licenses and attribution are retained.
 
 ## Update

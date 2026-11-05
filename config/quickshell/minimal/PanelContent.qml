@@ -3,19 +3,19 @@ pragma ComponentBehavior: Bound
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
-import "sabari" as Sabari
+import "panels" as Panels
 
 ColumnLayout {
     id: panelContent
     required property ShellState controller
     required property bool opened
-    readonly property bool sabariPanel: controller.panel === "sound" || controller.panel === "session"
+    readonly property bool expandedPanel: controller.panel === "sound" || controller.panel === "session"
     readonly property real preferredWidth: controller.panel === "session" && pageLoader.item ? pageLoader.item.implicitWidth : 400
     readonly property real preferredHeight: pageLoader.item ? pageLoader.item.implicitHeight + (controller.panel === "session" ? 0 : 35) : 120
     function back() {
         return pageLoader.item && typeof pageLoader.item.back === "function" && pageLoader.item.back();
     }
-    spacing: sabariPanel ? 0 : 8
+    spacing: expandedPanel ? 0 : 8
     visible: panelContent.opened
     opacity: panelContent.opened ? 1 : 0
     Behavior on opacity {
@@ -24,7 +24,7 @@ ColumnLayout {
         }
     }
     RowLayout {
-        visible: !panelContent.sabariPanel
+        visible: !panelContent.expandedPanel
         Layout.fillWidth: true
         Rectangle {
             width: 5
@@ -88,7 +88,7 @@ ColumnLayout {
     }
     Text {
         text: panelContent.controller.message
-        visible: text !== "" && !panelContent.sabariPanel
+        visible: text !== "" && !panelContent.expandedPanel
         color: Theme.accent
         font.family: Theme.font
         font.pixelSize: 11
@@ -162,14 +162,14 @@ ColumnLayout {
     }
     Component {
         id: sessionPage
-        Sabari.Power {
+        Panels.Power {
             open: panelContent.opened
             onRequestClose: panelContent.controller.panel = ""
         }
     }
     Component {
         id: soundPage
-        Sabari.SoundSurface {
+        Panels.SoundSurface {
             open: panelContent.opened
             onRequestClose: panelContent.controller.panel = ""
             onRequestSurface: name => {

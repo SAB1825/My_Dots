@@ -18,9 +18,9 @@ Singleton {
         { name: "Cinema", bands: [4, 3, 1, 0, -1, 0, 1, 1, 2, 2], bass: 3, treble: 1, widen: 40 }
     ]
 
-    readonly property string conf: Quickshell.shellPath("sabari/audio/eq.conf")
-    readonly property string micConf: Quickshell.shellPath("sabari/audio/mic.conf")
-    readonly property string stateDir: (Quickshell.env("XDG_STATE_HOME") || (Quickshell.env("HOME") + "/.local/state")) + "/quickshell/minimal/sabari"
+    readonly property string conf: Quickshell.shellPath("panels/audio/eq.conf")
+    readonly property string micConf: Quickshell.shellPath("panels/audio/mic.conf")
+    readonly property string stateDir: (Quickshell.env("XDG_STATE_HOME") || (Quickshell.env("HOME") + "/.local/state")) + "/quickshell/minimal/panels"
 
     property bool eq: false
     property bool denoise: false
@@ -41,7 +41,7 @@ Singleton {
         const all = Pipewire.nodes.values;
         for (let i = 0; i < all.length; i++) {
             const n = all[i];
-            if (n && n.isSink && !n.isStream && n.audio && n.name !== "sabari_eq")
+            if (n && n.isSink && !n.isStream && n.audio && n.name !== "minimal_eq")
                 out.push(n);
         }
         return out.sort((a, b) => root.label(a).localeCompare(root.label(b)));
@@ -53,7 +53,7 @@ Singleton {
         const all = Pipewire.nodes.values;
         for (let i = 0; i < all.length; i++) {
             const n = all[i];
-            if (n && !n.isSink && !n.isStream && n.audio && !/monitor/i.test(n.name || "") && n.name !== "sabari_mic")
+            if (n && !n.isSink && !n.isStream && n.audio && !/monitor/i.test(n.name || "") && n.name !== "minimal_mic")
                 out.push(n);
         }
         return out.sort((a, b) => root.label(a).localeCompare(root.label(b)));
@@ -67,7 +67,7 @@ Singleton {
     readonly property var filterNode: {
         const all = Pipewire.nodes.values;
         for (let i = 0; i < all.length; i++) {
-            if (all[i] && all[i].name === "sabari_eq")
+            if (all[i] && all[i].name === "minimal_eq")
                 return all[i];
         }
         return null;
@@ -82,7 +82,7 @@ Singleton {
         const all = Pipewire.nodes.values;
         for (let i = 0; i < all.length; i++) {
             const n = all[i];
-            if (n && n.isStream && n.isSink && n.audio && n.name !== "sabari_eq.out" && !/^output\.pw-loopback/.test(n.name || ""))
+            if (n && n.isStream && n.isSink && n.audio && n.name !== "minimal_eq.out" && !/^output\.pw-loopback/.test(n.name || ""))
                 out.push(n);
         }
         return out;
@@ -270,7 +270,7 @@ Singleton {
         for (let i = 0; i < groups.length; i++) {
             const g = groups[i];
             if (g && g.source === stream && g.target)
-                return g.target.name === "sabari_eq" ? root.sink : g.target;
+                return g.target.name === "minimal_eq" ? root.sink : g.target;
         }
         return null;
     }
@@ -373,7 +373,7 @@ Singleton {
         return "{ params = [ " + p.join(" ") + " ] }";
     }
 
-    /** Fetch the AutoEQ index once a month into ~/.cache/sabari/autoeq and parse its 8000-odd headphone entries. */
+    /** Fetch the AutoEQ index once a month into ~/.cache/quickshell/minimal/autoeq and parse its 8000-odd headphone entries. */
     function loadAeqIndex() {
         if (root.aeqIndex.length || root.aeqLoading)
             return;
@@ -422,7 +422,7 @@ Singleton {
 
     Process {
         id: aeqIndexProc
-        command: ["sh", "-c", 'd="${XDG_CACHE_HOME:-$HOME/.cache}/sabari/autoeq"; f="$d/INDEX.md"; mkdir -p "$d"; '
+        command: ["sh", "-c", 'd="${XDG_CACHE_HOME:-$HOME/.cache}/quickshell/minimal/autoeq"; f="$d/INDEX.md"; mkdir -p "$d"; '
             + 'if [ ! -s "$f" ] || [ -n "$(find "$f" -mtime +30)" ]; then '
             + 'curl -fsSL --max-time 20 -o "$f.tmp" https://raw.githubusercontent.com/jaakkopasanen/AutoEq/master/results/INDEX.md && mv "$f.tmp" "$f"; fi; '
             + 'cat "$f"']
@@ -516,7 +516,7 @@ Singleton {
             + '    systemctl --user is-active --quiet "$u" || systemd-run --user --unit="$u" --collect --quiet pipewire -c "$c"; '
             + '  else pgrep -f "pipewire -c $c" >/dev/null || setsid -f pipewire -c "$c"; fi; '
             + 'else systemctl --user stop "$u" 2>/dev/null; pkill -f "pipewire -c $c" 2>/dev/null; fi; }; '
-            + 'run minimal-sabari-eq "$1" "$2"; run minimal-sabari-mic "$3" "$4"; true',
+            + 'run minimal-audio-eq "$1" "$2"; run minimal-audio-mic "$3" "$4"; true',
             "sh", root.conf, root.eq ? "1" : "0", root.micConf, root.denoise && root.denoiseAvailable ? "1" : "0"];
         engineProc.running = true;
     }

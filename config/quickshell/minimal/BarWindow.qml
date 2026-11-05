@@ -6,8 +6,8 @@ import QtQuick.Layouts
 import Quickshell
 import Quickshell.Hyprland
 import Quickshell.Wayland
-import "sabari/Singletons" as Sabari
-import "sabari" as SabariViews
+import "panels/Singletons" as Panels
+import "panels" as PanelViews
 
 PanelWindow {
     id: barWindow
@@ -18,7 +18,7 @@ PanelWindow {
     }
     required property var modelData
     readonly property var monitor: Hyprland.monitorFor(modelData)
-    readonly property bool sabariPanel: controller.panel === "sound" || controller.panel === "session"
+    readonly property bool expandedPanel: controller.panel === "sound" || controller.panel === "session"
     readonly property bool opened: barWindow.controller.panel !== "" && barWindow.controller.panelScreen === modelData.name
     readonly property bool expanded: hover.hovered || linger.running
     readonly property real availableWidth: Math.max(1, width - 24)
@@ -66,15 +66,15 @@ PanelWindow {
         height: barWindow.opened ? Math.min(barWindow.height - 32, barWindow.pageSize.height) : barWindow.expanded ? 44 : 38
         radius: barWindow.opened ? 24 : height / 2
         border.width: 1
-        border.color: barWindow.sabariPanel && barWindow.opened ? Sabari.Theme.border : Theme.hover
+        border.color: barWindow.expandedPanel && barWindow.opened ? Panels.Theme.border : Theme.hover
         gradient: Gradient {
             GradientStop {
                 position: 0
-                color: barWindow.sabariPanel && barWindow.opened ? Sabari.Theme.cardTop : Theme.surface
+                color: barWindow.expandedPanel && barWindow.opened ? Panels.Theme.cardTop : Theme.surface
             }
             GradientStop {
                 position: 1
-                color: barWindow.sabariPanel && barWindow.opened ? Sabari.Theme.cardBot : Theme.background
+                color: barWindow.expandedPanel && barWindow.opened ? Panels.Theme.cardBot : Theme.background
             }
         }
         clip: true
@@ -250,7 +250,7 @@ PanelWindow {
                     hint: barWindow.controller.status.bluetoothError || "Bluetooth"
                     onClicked: barWindow.controller.toggle("bluetooth", barWindow.modelData.name)
                 }
-                SabariViews.BarButton {
+                PanelViews.BarButton {
                     glyph: barWindow.controller.sink?.audio?.muted ? "speaker-off" : "speaker"
                     hint: barWindow.controller.audioAvailable ? "Volume " + Math.round(barWindow.controller.sink.audio.volume * 100) + "% · scroll to adjust" : "No audio output"
                     onClicked: barWindow.controller.toggle("sound", barWindow.modelData.name)
@@ -266,7 +266,7 @@ PanelWindow {
                     hint: "Themes · Super+C"
                     onClicked: barWindow.controller.toggle("themes", barWindow.modelData.name)
                 }
-                SabariViews.BarButton {
+                PanelViews.BarButton {
                     glyph: "shutdown"
                     hint: "Session"
                     onClicked: barWindow.controller.toggle("session", barWindow.modelData.name)
@@ -283,7 +283,7 @@ PanelWindow {
         PanelContent {
             id: panelContent
             anchors.fill: parent
-            anchors.margins: barWindow.sabariPanel ? 0 : 14
+            anchors.margins: barWindow.expandedPanel ? 0 : 14
             controller: barWindow.controller
             opened: barWindow.opened
         }
