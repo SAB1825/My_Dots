@@ -1,5 +1,6 @@
 import Quickshell
 import Quickshell.Hyprland
+import Quickshell.Io
 import Quickshell.Wayland
 import QtQuick
 import QtQuick.Effects
@@ -11,6 +12,19 @@ Scope {
     id: root
 
     property var panels: ({})
+    property bool shown: true
+
+    GlobalShortcut {
+        appid: "quickshell"
+        name: "barToggle"
+        onPressed: root.shown = !root.shown
+    }
+
+    IpcHandler {
+        target: "bar"
+        function toggle(): void { root.shown = !root.shown; }
+        function visible(): bool { return root.shown; }
+    }
 
     Variants {
         model: Quickshell.screens
@@ -20,6 +34,7 @@ Scope {
             id: win
             required property var modelData
             screen: modelData
+            visible: root.shown
 
             readonly property string screenName: modelData.name
 
@@ -31,7 +46,7 @@ Scope {
             }
 
             implicitHeight: 96
-            exclusiveZone: win.autohide ? 0 : BarConfig.s("barHeight", win.screenName)
+            exclusiveZone: !root.shown || win.autohide ? 0 : BarConfig.s("barHeight", win.screenName)
             color: "transparent"
 
             mask: Region { item: hitbox }

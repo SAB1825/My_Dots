@@ -343,18 +343,9 @@ Item {
                     visible: mediaMod.showCover
                     anchors.verticalCenter: parent.verticalCenter
 
-                    ProgressRing {
-                        anchors.fill: parent
-                        visible: Media.hasPosition
-                        value: Media.progress
-                        color: Colors.accent
-                        trackColor: Qt.rgba(Colors.outline.r, Colors.outline.g,
-                                            Colors.outline.b, 0.30)
-                    }
-
                     Rectangle {
-                        width: 16
-                        height: 16
+                        width: 20
+                        height: 20
                         radius: 5
                         clip: true
                         anchors.centerIn: parent
