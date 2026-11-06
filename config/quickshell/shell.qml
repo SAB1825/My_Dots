@@ -18,6 +18,14 @@ ShellRoot {
         function onReloadFailed(error) { Quickshell.inhibitReloadPopup(); }
     }
 
+    Process {
+        running: true
+        command: ["hyprctl", "eval",
+            "hl.bind('SUPER + E', hl.dsp.global('quickshell:files')); "
+            + "hl.bind('SUPER + CTRL + P', hl.dsp.global('quickshell:procs')); "
+            + "hl.bind('SUPER + CTRL + E', hl.dsp.global('quickshell:eq'))"]
+    }
+
     PwObjectTracker {
         objects: {
             const list = [];
@@ -48,7 +56,16 @@ ShellRoot {
             net: netL,
             notifCenter: notifCenterL,
             timer: timerL,
-            audio: audioPanelL
+            audio: audioPanelL,
+            battery: batteryL,
+            launcher: launcherL,
+            clipboard: clipboardL,
+            wallpapers: wallpapersL,
+            files: filesL,
+            sysRings: sysRingsL,
+            procs: procsL,
+            eq: eqL,
+            powerMenu: powerMenuL
         })
     }
     Osd {}
@@ -62,19 +79,15 @@ ShellRoot {
     LazyLoader { id: audioPanelL; AudioPanel {} }
     LazyLoader { id: powerMenuL; PowerMenu {} }
     LazyLoader { id: netL; NetPanel {} }
-    LazyLoader { id: overviewL; Overview {} }
     LazyLoader { id: notifCenterL; loading: true; NotifCenter {} }
     LazyLoader { id: filesL; Files {} }
-    LazyLoader { id: printL; PrintPanel {} }
     LazyLoader { id: mediaL; MediaPanel {} }
     LazyLoader { id: calendarL; loading: true; Calendar {} }
     LazyLoader { id: sysRingsL; SysRings {} }
     LazyLoader { id: procsL; Procs {} }
     LazyLoader { id: batteryL; BatteryPanel {} }
-    LazyLoader { id: displaysL; Displays {} }
     LazyLoader { id: timerL; TimerPanel {} }
     LazyLoader { id: eqL; Eq {} }
-    LazyLoader { id: aulaL; AulaPanel {} }
 
     readonly property var launcher: launcherL.item
     readonly property var clipboard: clipboardL.item
@@ -82,16 +95,13 @@ ShellRoot {
     readonly property var audioPanel: audioPanelL.item
     readonly property var powerMenu: powerMenuL.item
     readonly property var net: netL.item
-    readonly property var overview: overviewL.item
     readonly property var notifCenter: notifCenterL.item
     readonly property var files: filesL.item
-    readonly property var printPanel: printL.item
     readonly property var media: mediaL.item
     readonly property var calendar: calendarL.item
     readonly property var sysRings: sysRingsL.item
     readonly property var timer: timerL.item
     readonly property var eq: eqL.item
-    readonly property var aulaPanel: aulaL.item
 
     Lock {
         id: lock
@@ -118,43 +128,9 @@ ShellRoot {
         }
     }
 
-    IpcHandler {
-        target: "aula"
 
-        function toggle(): void { panelDo(aulaL, p => p.toggle()); }
-        function open(): void { panelDo(aulaL, p => p.shown = true); }
-        function close(): void { if (aulaL.item) aulaL.item.close(); }
-        function mode(key: string): void { Aula.setMode(key); }
-        function color(hex: string): void { Aula.setColor(hex); }
-        function brightness(level: int): void { Aula.setBrightness(level); }
-        function light(): void { Aula.setOn(!Aula.on); }
-        function battery(level: int): void { Aula.hwBattery = level; }
-        function preset(name: string): void {
-            const i = (Aula.presets || []).findIndex(p => p.name === name);
-            if (i >= 0)
-                Aula.loadPreset(i);
-        }
-        function state(): string {
-            return "connection=" + Aula.connection + " ready=" + Aula.ready
-                 + " mode=" + Aula.mode + " on=" + Aula.on + " error=" + Aula.error;
-        }
-    }
 
-    IpcHandler {
-        target: "printing"
 
-        function file(path: string): string {
-            if (!path)
-                return "нужен путь к файлу";
-            panelDo(printL, p => p.open(path));
-            return "ок";
-        }
-
-        function open(): string {
-            panelDo(printL, p => p.toggle());
-            return "ок";
-        }
-    }
 
     Process {
         running: true
@@ -216,11 +192,6 @@ ShellRoot {
         onPressed: panelDo(launcherL, p => p.toggle())
     }
 
-    GlobalShortcut {
-        appid: "quickshell"
-        name: "aula"
-        onPressed: panelDo(aulaL, p => p.toggle())
-    }
 
     GlobalShortcut {
         appid: "quickshell"
@@ -244,11 +215,6 @@ ShellRoot {
         onPressed: panelDo(filesL, p => p.toggle())
     }
 
-    GlobalShortcut {
-        appid: "quickshell"
-        name: "print"
-        onPressed: panelDo(printL, p => p.toggle())
-    }
 
     GlobalShortcut {
         appid: "quickshell"
@@ -310,11 +276,6 @@ ShellRoot {
         }
     }
 
-    GlobalShortcut {
-        appid: "quickshell"
-        name: "overview"
-        onPressed: panelDo(overviewL, p => p.toggle())
-    }
 
     GlobalShortcut {
         appid: "quickshell"
@@ -352,11 +313,6 @@ ShellRoot {
         onPressed: if (Power.present) panelDo(batteryL, p => p.toggle())
     }
 
-    GlobalShortcut {
-        appid: "quickshell"
-        name: "displays"
-        onPressed: panelDo(displaysL, p => p.toggle())
-    }
 
     GlobalShortcut {
         appid: "quickshell"

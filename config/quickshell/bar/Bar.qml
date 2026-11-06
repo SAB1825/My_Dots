@@ -14,6 +14,13 @@ Scope {
     property var panels: ({})
     property bool shown: true
 
+    // Clear the frosted-bar rule when restoring the grouped design.
+    Process {
+        running: true
+        command: ["hyprctl", "eval",
+            "hl.layer_rule({ name = 'quickshell-bar-frost', match = { namespace = '^qs-bar$' }, blur = false, ignore_alpha = 0.1 })"]
+    }
+
     GlobalShortcut {
         appid: "quickshell"
         name: "barToggle"

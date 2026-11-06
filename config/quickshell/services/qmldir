@@ -23,7 +23,6 @@ singleton Outbound Outbound.qml
 singleton Peripherals Peripherals.qml
 singleton Prefs Prefs.qml
 singleton Power Power.qml
-singleton Printing Printing.qml
 singleton Recorder Recorder.qml
 singleton Running Running.qml
 singleton Scaler Scaler.qml
@@ -38,5 +37,4 @@ singleton Wellbeing Wellbeing.qml
 singleton IslandBus IslandBus.qml
 singleton Reminders Reminders.qml
 singleton Notes Notes.qml
-singleton Aula Aula.qml
 singleton Mouse Mouse.qml

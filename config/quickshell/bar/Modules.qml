@@ -89,7 +89,31 @@ Item {
         case "text":        return freeText;
         case "command":     return command;
         }
+        if (BarConfig.panelButtons[type]) return panelButton;
         return null;
+    }
+
+    Component {
+        id: panelButton
+
+        Text {
+            property var item: null
+            property bool shown: true
+            readonly property var button: BarConfig.panelButtons[item ? item.type : ""]
+            text: button ? button.glyph : ""
+            color: Colors.fgDim
+            font.family: kit.mono
+            font.pixelSize: kit.glyphSize
+            anchors.verticalCenter: parent ? parent.verticalCenter : undefined
+
+            Tip {
+                cursorShape: Qt.PointingHandCursor
+                text: parent.button ? parent.button.title : "" }
+            TapHandler {
+                cursorShape: Qt.PointingHandCursor
+                onTapped: if (parent.button) kit.panelDo(parent.button.panel, p => p.toggle())
+            }
+        }
     }
 
     SystemClock { id: clockMinutes; precision: SystemClock.Minutes }
@@ -160,7 +184,9 @@ Item {
 
             readonly property bool pill: BarConfig.opt(item, "pill")
 
-            Tip { text: I18n.t("bar.workspaces") }
+            Tip {
+                cursorShape: Qt.PointingHandCursor
+                text: I18n.t("bar.workspaces") }
 
             property real trailFrom: 0
             property real trailTo: 0
@@ -239,11 +265,11 @@ Item {
                         readonly property bool hasApp:
                             Running.onWorkspace(modelData.id)
 
-                        width: ws.pill && (isActive || hasApp) ? 20 : 7
+                        width: isActive ? 24 : 7
                         height: 7
                         radius: 4
-                        color: hasApp ? Colors.accentAlt
-                             : isActive ? Colors.accent
+                        color: isActive ? Colors.accent
+                             : hasApp ? Colors.accentAlt
                              : Qt.rgba(Colors.fgDim.r, Colors.fgDim.g,
                                        Colors.fgDim.b, 0.30)
                         anchors.verticalCenter: parent.verticalCenter
@@ -327,6 +353,7 @@ Item {
             anchors.verticalCenter: parent ? parent.verticalCenter : undefined
 
             Tip {
+                cursorShape: Qt.PointingHandCursor
                 text: Media.has
                     ? Media.label + I18n.t("bar.clickMedia") + " · Scroll to adjust volume"
                     : ""
@@ -491,6 +518,7 @@ Item {
             }
 
             Tip {
+                cursorShape: Qt.PointingHandCursor
                 text: clockMod.wantFeedback
                     ? Feedback.label
                     : Qt.formatDateTime(clockMinutes.date, "dddd, d MMMM yyyy")
@@ -499,14 +527,16 @@ Item {
 
             readonly property bool ringWanted: wantSeconds
 
-            RollText {
+            Text {
                 id: clockText
 
                 anchors.centerIn: parent
-                text: Qt.formatDateTime(clockMinutes.date,
-                                        BarConfig.opt(clockMod.item, "format"))
+                text: Qt.formatDateTime(clockMinutes.date, "ddd, d MMM HH:mm")
                 color: Colors.fg
-                pixelSize: kit.fontSize + 1
+                font.family: kit.mono
+                font.pixelSize: kit.fontSize + 1
+                font.weight: Font.DemiBold
+                font.features: { "tnum": 1 }
 
                 opacity: clockMod.wantFeedback ? 0 : 1
                 transform: Translate { y: clockMod.wantFeedback ? -13 : 0 }
@@ -683,7 +713,9 @@ Item {
             }
             Behavior on opacity { NumberAnimation { duration: 200 } }
 
-            Tip { text: "VPN  ·  " + Vpn.label + I18n.t("bar.clickAddr") }
+            Tip {
+                cursorShape: Qt.PointingHandCursor
+                text: "VPN  ·  " + Vpn.label + I18n.t("bar.clickAddr") }
 
             Rectangle {
                 anchors.centerIn: parent
@@ -774,7 +806,7 @@ Item {
                 cursorShape: Qt.PointingHandCursor
                 text: (volRow.muted ? I18n.t("audio.soundOff")
                                     : I18n.t("audio.volume") + Math.round(volRow.vol * 100) + "%")
-                      + I18n.t("bar.clickVol")
+                      + " · Click to open audio panel"
             }
 
             Text {
@@ -799,10 +831,7 @@ Item {
                 cursorShape: Qt.PointingHandCursor
                 hoverEnabled: true
                 onWheel: wheel => kit.scrollVolume(wheel)
-                onClicked: {
-                    const a = volRow.sink && volRow.sink.audio;
-                    if (a) a.muted = !a.muted;
-                }
+                onClicked: kit.panelDo("audio", p => p.toggle())
             }
         }
     }
@@ -851,6 +880,7 @@ Item {
             anchors.verticalCenter: parent ? parent.verticalCenter : undefined
 
             Tip {
+                cursorShape: Qt.PointingHandCursor
                 text: {
                     if (!battText.dev) return "";
                     if (battText.charging) return I18n.t("bar.charging") + battText.pct + "%";
@@ -861,6 +891,11 @@ Item {
                     return I18n.t("bar.battery") + battText.pct + I18n.t("bar.remaining")
                            + (h > 0 ? h + I18n.t("unit.hourSpace") : "") + m + I18n.t("unit.min");
                 }
+            }
+
+            TapHandler {
+                cursorShape: Qt.PointingHandCursor
+                onTapped: kit.panelDo("battery", p => p.toggle())
             }
 
             Behavior on color { ColorAnimation { duration: 300 } }
@@ -881,7 +916,9 @@ Item {
             font.weight: Font.DemiBold
             anchors.verticalCenter: parent ? parent.verticalCenter : undefined
 
-            Tip { text: I18n.t("bar.layout") }
+            Tip {
+                cursorShape: Qt.PointingHandCursor
+                text: I18n.t("bar.layout") }
 
             MouseArea {
                 anchors.fill: parent
@@ -961,7 +998,9 @@ Item {
             radius: Shape.detail + 4
             color: Qt.rgba(Colors.bad.r, Colors.bad.g, Colors.bad.b, 0.14)
 
-            Tip { text: I18n.t("bar.recording") }
+            Tip {
+                cursorShape: Qt.PointingHandCursor
+                text: I18n.t("bar.recording") }
 
             Row {
                 id: recInner
@@ -1071,7 +1110,9 @@ Item {
                         spacing: 4
             anchors.verticalCenter: parent ? parent.verticalCenter : undefined
 
-            Tip { text: I18n.t("desk.notifs") }
+            Tip {
+                cursorShape: Qt.PointingHandCursor
+                text: I18n.t("desk.notifs") }
 
             Glyph {
                 text: NotifHistory.unseen > 0 ? "󰂚" : "󰂜"
@@ -1103,7 +1144,9 @@ Item {
             font.pixelSize: kit.glyphSize
             anchors.verticalCenter: parent ? parent.verticalCenter : undefined
 
-            Tip { text: Dnd.active ? I18n.t("notif.dnd") : I18n.t("notif.dndOff") }
+            Tip {
+                cursorShape: Qt.PointingHandCursor
+                text: Dnd.active ? I18n.t("notif.dnd") : I18n.t("notif.dndOff") }
 
             MouseArea {
                 anchors.fill: parent
@@ -1313,7 +1356,9 @@ Item {
             font.pixelSize: kit.fontSize
             anchors.verticalCenter: parent ? parent.verticalCenter : undefined
 
-            Tip { text: I18n.t("bar.clickCal") }
+            Tip {
+                cursorShape: Qt.PointingHandCursor
+                text: I18n.t("bar.clickCal") }
 
             MouseArea {
                 anchors.fill: parent
@@ -1330,11 +1375,13 @@ Item {
         Row {
             property var item: null
                         spacing: 4
-            property bool shown: Timers.soonest !== null
+            property bool shown: true
             visible: shown
             anchors.verticalCenter: parent ? parent.verticalCenter : undefined
 
-            Tip { text: I18n.t("timer.title") }
+            Tip {
+                cursorShape: Qt.PointingHandCursor
+                text: I18n.t("timer.title") }
 
             Glyph {
                 text: "󰔛"

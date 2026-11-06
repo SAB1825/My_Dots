@@ -8,7 +8,18 @@ import "root:/services"
 Singleton {
     id: root
 
-    readonly property var registry: ({
+    readonly property var panelButtons: ({
+        launcher: { title: "App launcher", glyph: "󰀻", panel: "launcher" },
+        clipboard: { title: "Clipboard history", glyph: "󰅍", panel: "clipboard" },
+        wallpapers: { title: "Wallpapers", glyph: "󰸉", panel: "wallpapers" },
+        files: { title: "Files", glyph: "󰉋", panel: "files" },
+        sysRings: { title: "System monitor", glyph: "󰍛", panel: "sysRings" },
+        procs: { title: "Processes", glyph: "󰓅", panel: "procs" },
+        eq: { title: "Equalizer", glyph: "󰓃", panel: "eq" },
+        powerMenu: { title: "Power menu", glyph: "󰐥", panel: "powerMenu" }
+    })
+
+    readonly property var registry: Object.assign({}, panelButtons, {
         "workspaces": {
             title: I18n.t("barc.workspaces"), glyph: "󰧨", group: "system",
             opts: { pill: { type: "bool", def: true } }
@@ -158,7 +169,7 @@ Singleton {
         if (item && item.opts && item.opts[name] !== undefined)
             return item.opts[name];
         const spec = root.registry[item ? item.type : ""];
-        if (spec && spec.opts[name])
+        if (spec && spec.opts && spec.opts[name])
             return spec.opts[name].def;
         return undefined;
     }
@@ -171,8 +182,8 @@ Singleton {
         itemSpacing:   { type: "int", def: 8,   min: 0,  max: 40 },
         islandPadding: { type: "int", def: 10,  min: 0,  max: 40 },
         radius:        { type: "int", def: 12,  min: 0,  max: 40 },
-        fontSize:      { type: "int", def: 11,  min: 7,  max: 22 },
-        glyphSize:     { type: "int", def: 12,  min: 7,  max: 26 },
+        fontSize:      { type: "int", def: 13,  min: 7,  max: 22 },
+        glyphSize:     { type: "int", def: 14,  min: 7,  max: 26 },
         fill:          { type: "int", def: 80,  min: 0,  max: 100 },
         fillHover:     { type: "int", def: 92,  min: 0,  max: 100 },
         borderAlpha:   { type: "int", def: 32,  min: 0,  max: 100 },
@@ -299,18 +310,16 @@ Singleton {
         return {
             left: [
                 isle([m("workspaces")]),
-                isle([m("media")])
+                isle([m("media")]),
+                isle([m("files"), m("sysRings"), m("procs")])
             ],
             center: [
-                isle([m("clock")])
+                isle([m("clock", { format: "ddd, d MMM HH:mm", seconds: false, feedback: false })])
             ],
             right: [
-                isle([
-                    m("outbound"), m("recorder"),
-                    m("vpn"), m("network"), m("bluetooth"), m("mic"),
-                    m("volume"), m("sep"),
-                    m("peripherals"), m("keyboard"), m("battery")
-                ])
+                isle([m("outbound"), m("recorder"), m("vpn"), m("network"), m("bluetooth")]),
+                isle([m("volume"), m("mic"), m("battery"), m("peripherals")]),
+                isle([m("timer"), m("notifs"), m("powerMenu")])
             ]
         };
     }
@@ -523,6 +532,7 @@ Singleton {
 
     function writeNow() {
         flush.stop();
+        store.panelBarVersion = 4;
         store.perScreen = root.perScreen;
         store.cfgs = root.cfgs;
         file.writeAdapter();
@@ -629,6 +639,28 @@ Singleton {
                 }
             }
             root.keySeed = max + 1;
+            // Restore the grouped layout once, keeping per-screen text sizes.
+            if (store.panelBarVersion < 3) {
+                for (const name in out) {
+                    out[name].zones = root.defaults();
+                    const previous = out[name].style;
+                    out[name].style = {};
+                    for (const key of ["fontSize", "glyphSize", "autohide"])
+                        if (previous[key] !== undefined) out[name].style[key] = previous[key];
+                }
+                root.cfgs = out;
+                root.save();
+            }
+            if (store.panelBarVersion < 4) {
+                for (const name in out)
+                    for (const zone of root.zoneNames)
+                        for (const island of out[name].zones[zone])
+                            for (const item of island.items)
+                                if (item.type === "clock")
+                                    item.opts.format = "ddd, d MMM HH:mm";
+                root.cfgs = out;
+                root.save();
+            }
         }
 
         onLoadFailed: (error) => {
@@ -643,6 +675,7 @@ Singleton {
 
         JsonAdapter {
             id: store
+            property int panelBarVersion: 0
             property var cfgs: ({})
             property bool perScreen: false
             property var zones: ({})

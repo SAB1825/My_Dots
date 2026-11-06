@@ -60,7 +60,7 @@ def main():
     run('cargo', 'build', '--release', '--locked', '--manifest-path',
         str(ROOT / 'src/islandd/Cargo.toml'), '--target-dir', str(target))
     put(HOME / '.local/bin/islandd', (target / 'release/islandd').read_bytes(), True)
-    for name in ['hyprdo', 'qs-solo', 'aulactl']:
+    for name in ['hyprdo', 'qs-solo']:
         put(HOME / '.local/bin' / name, (ROOT / 'bin' / name).read_bytes(), True)
     # Copy only helpers used by the shell, excluding upstream update/install machinery.
     for folder in ['tools', 'lock', 'clipboard', 'capture', 'print']:
