@@ -2,6 +2,7 @@ vim.g.netrw_banner = 0
 
 vim.opt.nu = true
 vim.opt.relativenumber = true
+vim.opt.fillchars:append({ eob = " " })
 
 vim.opt.tabstop = 4
 vim.opt.softtabstop = 4
