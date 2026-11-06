@@ -10,6 +10,7 @@ hl.bind(mainMod .. " + Return", hl.dsp.exec_cmd(vars.terminal))
 hl.bind(mainMod .. " + R",      hl.dsp.exec_cmd(vars.menu))
 hl.bind(mainMod .. " + space",  hl.dsp.exec_cmd(vars.menu))
 hl.bind(mainMod .. " + B",      hl.dsp.exec_cmd("/home/sabari/.local/bin/hyprdo dispatch global quickshell:bluetooth"))
+hl.bind(mainMod .. " + SHIFT + S", hl.dsp.exec_cmd("/home/sabari/.local/bin/rishot"))
 
 -- Window management ---------------------------------------------------------
 
@@ -37,7 +38,7 @@ end
 
 -- Scratchpad
 hl.bind(mainMod .. " + S",         hl.dsp.workspace.toggle_special("magic"))
-hl.bind(mainMod .. " + SHIFT + S", hl.dsp.window.move({ workspace = "special:magic" }))
+hl.bind(mainMod .. " + CTRL + S",  hl.dsp.window.move({ workspace = "special:magic" }))
 
 -- Cycle through existing workspaces with the mouse wheel
 hl.bind(mainMod .. " + mouse_down", hl.dsp.focus({ workspace = "e+1" }))
