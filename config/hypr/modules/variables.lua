@@ -3,6 +3,6 @@
 return {
     terminal    = "kitty",
     fileManager = "dolphin",
-    menu        = "qs -c minimal ipc call shell launcher",
+    menu        = "/home/sabari/.local/bin/hyprdo dispatch global quickshell:launcher",
     mainMod     = "SUPER",
 }

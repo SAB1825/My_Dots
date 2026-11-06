@@ -1,0 +1,402 @@
+#!/usr/bin/env python3
+"""Copy the live configuration into the repository, without the comments.
+
+The working copies under ~/.config are written for whoever has to change them
+next: every non-obvious decision carries the reasoning that produced it. The
+published copies are not. A comment explains a choice to someone who already
+has the context of the machine it was made on, and stripped of that context it
+reads as noise at best and as a private note at worst.
+
+So the repository keeps the configuration and drops the prose. Blank lines
+survive, collapsed to one, because the shape of a file is part of reading it.
+
+Usage:
+    dots-sync            copy everything the manifest lists
+    dots-sync --check    report what would change, copy nothing
+    dots-sync PATH...    copy only files under these $HOME-relative paths
+"""
+
+import re
+import shutil
+import sys
+from pathlib import Path
+
+HOME = Path.home()
+REPO = Path(__file__).resolve().parent.parent
+
+# What travels, and where it lands. Source is relative to $HOME, destination to
+# the repository root.
+MANIFEST = [
+    (".config/quickshell", "config/quickshell"),
+    (".config/hypr", "config/hypr"),
+    (".config/serezha", "config/serezha"),
+    (".config/cava", "config/cava"),
+    (".config/kitty", "config/kitty"),
+    (".config/matugen", "config/matugen"),
+    (".config/rofi", "config/rofi"),
+    (".config/wlogout", "config/wlogout"),
+    (".config/yazi", "config/yazi"),
+    (".config/zed", "config/zed"),
+    (".config/fastfetch", "config/fastfetch"),
+    (".config/firejail", "config/firejail"),
+    (".config/gtk-3.0", "config/gtk-3.0"),
+    (".config/gtk-4.0", "config/gtk-4.0"),
+    (".config/qt5ct", "config/qt5ct"),
+    (".config/qt6ct", "config/qt6ct"),
+    (".config/pipewire", "config/pipewire"),
+    (".config/wireplumber", "config/wireplumber"),
+    (".local/share/wireplumber/scripts", "home/.local/share/wireplumber/scripts"),
+    ("Projects/f-sddm", "extras/sddm"),
+    ("Projects/islandd/Cargo.toml", "src/islandd/Cargo.toml"),
+    ("Projects/islandd/Cargo.lock", "src/islandd/Cargo.lock"),
+    ("Projects/islandd/src", "src/islandd/src"),
+    (".config/cliphist", "config/cliphist"),
+    (".local/bin/shell-autostart", "bin/shell-autostart"),
+    (".local/bin/shell-watchdog", "bin/shell-watchdog"),
+    (".local/bin/shell-switch", "bin/shell-switch"),
+    (".local/bin/hyprdots-update", "bin/hyprdots-update"),
+    (".local/bin/qs-solo", "bin/qs-solo"),
+    (".local/bin/serezha-mode", "bin/serezha-mode"),
+    (".local/bin/serezha-menu", "bin/serezha-menu"),
+    (".local/bin/serezha-clip", "bin/serezha-clip"),
+    (".local/bin/serezha-dnd", "bin/serezha-dnd"),
+    (".local/bin/serezha-env", "bin/serezha-env"),
+    (".local/bin/serezha-mem", "bin/serezha-mem"),
+    (".local/bin/serezha-files", "bin/serezha-files"),
+    (".local/bin/serezha-power", "bin/serezha-power"),
+    (".local/bin/serezha-automount", "bin/serezha-automount"),
+    (".local/bin/serezha-shot", "bin/serezha-shot"),
+    (".local/bin/serezha-bar-hypr", "bin/serezha-bar-hypr"),
+    (".local/bin/hyprdo", "bin/hyprdo"),
+    (".local/bin/aulactl", "bin/aulactl"),
+    (".local/bin/dots-migrate", "bin/dots-migrate"),
+    (".local/share/applications/serezha-files.desktop",
+     "config/serezha/applications/serezha-files.desktop"),
+    (".config/pipewire/rnnoise.conf", "extras/pulse-elite/.config/pipewire/rnnoise.conf"),
+    (".config/pipewire/pipewire.conf.d/60-pulse-elite-mic.conf", "extras/pulse-elite/.config/pipewire/pipewire.conf.d/60-pulse-elite-mic.conf"),
+    (".config/wireplumber/wireplumber.conf.d/51-pulse-elite.conf", "extras/pulse-elite/.config/wireplumber/wireplumber.conf.d/51-pulse-elite.conf"),
+    (".config/wireplumber/wireplumber.conf.d/52-pulse-elite-default.conf", "extras/pulse-elite/.config/wireplumber/wireplumber.conf.d/52-pulse-elite-default.conf"),
+    (".config/wireplumber/wireplumber.conf.d/53-playstation-link.conf", "extras/pulse-elite/.config/wireplumber/wireplumber.conf.d/53-playstation-link.conf"),
+    (".local/share/wireplumber/scripts/pulse-elite-default.lua", "extras/pulse-elite/.local/share/wireplumber/scripts/pulse-elite-default.lua"),
+    (".local/bin/pulse-autoconnect", "extras/pulse-elite/.local/bin/pulse-autoconnect"),
+    (".local/bin/mic-denoise", "extras/pulse-elite/.local/bin/mic-denoise"),
+]
+
+PERSONAL = (
+    ".config/pipewire/rnnoise.conf",
+    ".config/pipewire/pipewire.conf.d/60-pulse-elite-mic.conf",
+    ".config/wireplumber/wireplumber.conf.d/51-pulse-elite.conf",
+    ".config/wireplumber/wireplumber.conf.d/52-pulse-elite-default.conf",
+    ".config/wireplumber/wireplumber.conf.d/53-playstation-link.conf",
+    ".local/share/wireplumber/scripts/pulse-elite-default.lua",
+    ".local/bin/pulse-autoconnect",
+    ".local/bin/mic-denoise",
+)
+
+# Имена из SKIP_EXACT, которые по этим путям всё-таки публикуются. Запрет там
+# стоит из-за сгенерированных файлов: ~/.config/gtk-3.0/gtk.css пишет matugen,
+# а «config» — это имя доброй половины машинных файлов. В дереве serezha те же
+# имена носят написанные руками статичные файлы, и без них режим не собрать.
+# Состояние машины, а не конфигурация: в какой режим сессия переключена
+# сейчас. Публиковать нечего — у чужой машины оно своё.
+SKIP_PATHS = {
+    ".config/serezha/state",
+    # Симлинк, которым переключается режим. У чужой машины он свой, и
+    # опубликованная копия сделала бы вид, что режим прибит гвоздями.
+    ".config/hypr/config/mode.conf",
+    ".config/hypr/config/gpu.conf",
+}
+
+KEEP_PATHS = {
+    ".config/serezha/config",
+    ".config/serezha/gtk-3.0/gtk.css",
+    ".config/serezha/gtk-4.0/gtk.css",
+}
+
+# Never published: machine state, generated palettes, caches, private lists.
+SKIP_NAMES = {
+    "__pycache__", ".git", "out", "themes", "flavors", "plugins",
+}
+
+# Исключения по пути, а не по имени: каталог "scripts" есть и у rofi, и у
+# hypr, и второй из них — сердце конфигурации.
+SKIP_PREFIXES = (
+    # Сторонний набор тем rofi со своей лицензией: ставится отдельно и чужому
+    # репозиторию не принадлежит.
+    ".config/rofi/applets",
+    ".config/rofi/launchers",
+    ".config/rofi/powermenu",
+    ".config/rofi/scripts",
+    ".config/rofi/images",
+)
+SKIP_SUFFIXES = {".log", ".bak", ".swp", ".pyc", ".png", ".jpg", ".jpeg"}
+SKIP_EXACT = {
+    "colors.conf", "lock-colors.conf", "current-wallpaper", "hyprpaper.conf",
+    # Раскладка мониторов этой машины: у читателя свои выходы.
+    "monitors.conf",
+    "matugen.rasi", "colors.css", "colors-matugen.css", "gtk.css",
+    "idle-inhibit.list", "outbound-ignore.list", "list.rasi", "grid.rasi",
+    "dunstrc", "config", "matugen.conf", "mic-level", "lock-choice",
+    # Записывают в себя абсолютный путь к сгенерированной палитре, то есть
+    # домашний каталог этой машины.
+    "qt5ct.conf", "qt6ct.conf",
+}
+
+# Comments are removed from these; everything else is copied byte for byte.
+# .jsonc — это json, в который waybar разрешает писать // комментарии, и по
+# части комментариев он ведёт себя как C, а не как конфиг с решётками.
+CLIKE = {".qml", ".js", ".jsonc", ".css", ".rasi", ".qss", ".c"}
+HASHLIKE = {".conf", ".sh", ".py", ".toml", ".ini", ".yaml", ".yml", ".inc",
+            ".profile", ".local"}
+LUALIKE = {".lua"}
+
+
+def strip_clike(text: str) -> str:
+    """Drop // and /* */ comments, respecting strings.
+
+    A regex over the whole file would eat the // inside "https://" and the
+    apostrophe in a Russian string alike, so the file is walked once with a
+    tiny state machine instead.
+    """
+    out = []
+    i, n = 0, len(text)
+    quote = None
+
+    # Последний значимый символ — по нему отличается деление от регулярного
+    # выражения. После `(`, `=`, `&&` и им подобных косая черта открывает
+    # регексп; после имени, числа или закрывающей скобки — делит. Без этого
+    # `/^https?:\/\//` выглядит как начало комментария, и половина строки
+    # уезжает в никуда.
+    prev = ""
+    REGEX_AFTER = set("(,=:[!&|?{};+-*%^~<>")
+
+    while i < n:
+        c = text[i]
+
+        if quote:
+            out.append(c)
+            if c == "\\" and i + 1 < n:
+                out.append(text[i + 1])
+                i += 2
+                continue
+            if c == quote:
+                quote = None
+            i += 1
+            continue
+
+        if c in "\"'`":
+            quote = c
+            out.append(c)
+            prev = c
+            i += 1
+            continue
+
+        # Регулярное выражение: читаем до закрывающей косой, помня про
+        # экранирование и про класс символов, внутри которого косая ничего
+        # не закрывает.
+        if (c == "/" and i + 1 < n and text[i + 1] not in "/*"
+                and prev in REGEX_AFTER):
+            out.append(c)
+            i += 1
+            in_class = False
+            while i < n:
+                ch = text[i]
+                out.append(ch)
+                i += 1
+                if ch == "\\" and i < n:
+                    out.append(text[i])
+                    i += 1
+                    continue
+                if ch == "[":
+                    in_class = True
+                elif ch == "]":
+                    in_class = False
+                elif ch == "/" and not in_class:
+                    break
+                elif ch == "\n":
+                    break
+            prev = "/"
+            continue
+
+        # Комментарий заменяется пробелами, а не вырезается: так номера
+        # строк не съезжают, и дальше видно, какая строка состояла из одного
+        # комментария, а какая была пустой с самого начала.
+        if c == "/" and i + 1 < n and text[i + 1] == "/":
+            while i < n and text[i] != "\n":
+                out.append(" ")
+                i += 1
+            continue
+
+        if c == "/" and i + 1 < n and text[i + 1] == "*":
+            out.append("  ")
+            i += 2
+            while i + 1 < n and not (text[i] == "*" and text[i + 1] == "/"):
+                out.append("\n" if text[i] == "\n" else " ")
+                i += 1
+            out.append("  ")
+            i += 2
+            continue
+
+        out.append(c)
+        if not c.isspace():
+            prev = c
+        i += 1
+
+    return "".join(out)
+
+
+def strip_hash(text: str) -> str:
+    """Drop whole-line # comments, keeping the shebang.
+
+    Only whole lines: a trailing # can live inside a quoted string or a colour,
+    and telling those apart is not worth the risk of corrupting a config.
+    """
+    lines = []
+    for index, line in enumerate(text.split("\n")):
+        if index == 0 and line.startswith("#!"):
+            lines.append(line)
+            continue
+        if line.lstrip().startswith("#"):
+            lines.append(" ")
+            continue
+        lines.append(line)
+    return "\n".join(lines)
+
+
+def strip_lua(text: str) -> str:
+    """Drop whole-line -- comments, the same way strip_hash does for #."""
+    return "\n".join(" " if line.lstrip().startswith("--") else line
+                     for line in text.split("\n"))
+
+
+def tidy(text: str, original: str) -> str:
+    """Drop the lines a comment used to occupy, tidy what is left.
+
+    A line that held nothing but a comment goes away entirely — leaving it
+    blank would pepper the file with gaps that were never in it. A line that
+    was blank to begin with stays, and runs of them collapse to one.
+    """
+    was = original.split("\n")
+    lines = []
+    for index, line in enumerate(text.split("\n")):
+        stripped = line.rstrip()
+        if stripped == "" and index < len(was) and was[index].strip() != "":
+            continue
+        lines.append(stripped)
+
+    out = []
+    blank = False
+    for line in lines:
+        if line == "":
+            if blank:
+                continue
+            blank = True
+        else:
+            blank = False
+        out.append(line)
+
+    while out and out[0] == "":
+        out.pop(0)
+    while out and out[-1] == "":
+        out.pop()
+
+    return "\n".join(out) + "\n"
+
+
+def clean(path: Path) -> bytes | None:
+    """The published form of one file, or None if it should not travel."""
+    try:
+        rel = str(path.relative_to(HOME))
+    except ValueError:
+        rel = ""
+    if rel in SKIP_PATHS:
+        return None
+    kept = rel in KEEP_PATHS
+    if not kept and (path.name in SKIP_EXACT or path.suffix in SKIP_SUFFIXES):
+        return None
+    # Рабочие копии «на всякий случай» — .bak, .bak-pre, .bak-netpanel и
+    # прочие хвосты: в репозитории им делать нечего.
+    if ".bak" in path.name or path.name.endswith("~"):
+        return None
+    # Оригиналы тем, отложенные на время «Серёжа мода». Это копии рабочих
+    # файлов под другим именем, и запреты по имени их не ловят: qt6ct.conf
+    # публиковать нельзя, а qt6ct.conf.pre-serezha — то же самое с хвостом.
+    if path.name.endswith(".pre-serezha"):
+        return None
+
+    raw = path.read_bytes()
+    try:
+        text = raw.decode("utf-8")
+    except UnicodeDecodeError:
+        return raw
+
+    # Домашний каталог этой машины в публикуемой копии заменяется меткой:
+    # у читателя он другой, а файлы вроде qt6ct и fuzzel абсолютный путь
+    # требуют — тильду они не разворачивают. Обратно метку подставляет
+    # install.sh при установке.
+    text = text.replace(str(HOME), "@HOME@")
+
+    if path.suffix in CLIKE:
+        stripped = strip_clike(text)
+    elif path.suffix in LUALIKE:
+        stripped = strip_lua(text)
+    elif path.suffix in HASHLIKE or not path.suffix:
+        stripped = strip_hash(text)
+    else:
+        return raw
+
+    return tidy(stripped, text).encode("utf-8")
+
+
+def walk(src: Path):
+    if src.is_file():
+        yield src
+        return
+    for child in sorted(src.rglob("*")):
+        if any(part in SKIP_NAMES for part in child.relative_to(src).parts):
+            continue
+        rel = str(child.relative_to(HOME))
+        if rel.startswith(SKIP_PREFIXES) or rel in PERSONAL:
+            continue
+        if child.is_file():
+            yield child
+
+
+def main() -> int:
+    check = "--check" in sys.argv
+    only = tuple(a for a in sys.argv[1:] if not a.startswith("-"))
+    changed = 0
+
+    for rel_src, rel_dst in MANIFEST:
+        src = HOME / rel_src
+        dst = REPO / rel_dst
+        if not src.exists():
+            continue
+
+        for path in walk(src):
+            if only and not str(path.relative_to(HOME)).startswith(only):
+                continue
+            body = clean(path)
+            if body is None:
+                continue
+
+            target = dst if src.is_file() else dst / path.relative_to(src)
+            if target.exists() and target.read_bytes() == body:
+                continue
+
+            changed += 1
+            print(("would update " if check else "update ")
+                  + str(target.relative_to(REPO)))
+            if check:
+                continue
+
+            target.parent.mkdir(parents=True, exist_ok=True)
+            target.write_bytes(body)
+            shutil.copymode(path, target)
+
+    print(f"{changed} file(s) {'to update' if check else 'updated'}")
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

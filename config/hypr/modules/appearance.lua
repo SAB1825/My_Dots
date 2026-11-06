@@ -52,9 +52,3 @@ hl.config({
         allow_new_top_layers_over_existing_fullscreen = false,
     },
 })
-
--- Shared Quickshell theme; preserves the geometry, opacity and blur above.
-local theme_path = (os.getenv("XDG_CONFIG_HOME") or (os.getenv("HOME") .. "/.config"))
-    .. "/quickshell/minimal/generated/current/hyprland.lua"
-local theme_ok, theme_error = pcall(dofile, theme_path)
-if not theme_ok then print("Quickshell theme: " .. tostring(theme_error)) end

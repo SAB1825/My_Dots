@@ -12,7 +12,9 @@ __pycache__/
 .cache/
 node_modules/
 backups/
-/config/quickshell/minimal/generated/
+/config/quickshell/build/
+/config/quickshell/generated/
+/config/quickshell/*-test-results.json
 
 # Neovim runtime logs.
 /config/nvim/*.log

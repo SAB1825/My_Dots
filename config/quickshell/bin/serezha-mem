@@ -1,0 +1,59 @@
+#!/usr/bin/env bash
+
+set -u
+
+SESSION_RE='^(Hyprland|quickshell|qs|waybar|mako|dunst|fuzzel|kitty|foot|nnn|Thunar|tumblerd|Xwayland|pipewire|pipewire-pulse|wireplumber|xdg-desktop-portal|xdg-desktop-portal-hyprland|xdg-desktop-portal-gtk|xdg-document-portal|xdg-permission-store|udiskie|udevadm|awww-daemon|wl-paste|wl-copy|wl-clip-persist|cliphist|nmcli|dbus-monitor|dbus-daemon|dconf-service|gnome-keyring-daemon|gvfsd|gvfsd-trash|gvfsd-metadata|gvfsd-fuse|gvfs-udisks2-volume-monitor|gvfs-goa-volume-monitor|gvfs-mtp-volume-monitor|gvfs-gphoto2-volume-monitor|gvfs-afc-volume-monitor|at-spi-bus-launcher|at-spi2-registryd|hyprpolkitagent|hyprlock|hypridle|swaybg|maybar|nc|socat|serezha-bar-hypr|serezha-xlazy|xwayland-satellite|serezha-automount|serezha-wsbar|serezha-mountd|mic-lock.sh|clipboard-guard.sh|cliphist-store.sh|pactl)$'
+
+pss_kb() {
+    local kb
+    kb=$(awk '/^Pss:/ { s += $2 } END { print s+0 }' "/proc/$1/smaps_rollup" 2>/dev/null)
+    printf '%s' "${kb:-0}"
+}
+
+collect() {
+    local pid comm kb
+    while read -r pid comm; do
+        [[ -d "/proc/$pid" ]] || continue
+        kb=$(pss_kb "$pid")
+        (( kb > 0 )) || continue
+        printf '%s\t%s\n' "$kb" "$comm"
+    done
+}
+
+report() {
+    local title="$1" data
+    data=$(cat)
+
+    printf '%s\n\n' "$title"
+    printf '%10s  %3s  %s\n' 'PSS' 'шт' 'процесс'
+    printf '%s\n' "$data" | awk -F'\t' '
+        { sum[$2] += $1; n[$2]++ }
+        END { for (c in sum) printf "%.1f\t%d\t%s\n", sum[c]/1024, n[c], c }' |
+        sort -rn -k1 |
+        awk -F'\t' '{ printf "%9.1fM  %3d  %s\n", $1, $2, $3 }'
+    printf '%s\n' "$data" | awk -F'\t' '
+        { total += $1 }
+        END { printf "\n%9.1fM  всего\n", total/1024 }'
+}
+
+names() {
+    ps -u "$(id -u)" -o pid=,args= |
+        awk '{
+            pid = $1; n = split($2, parts, "/"); name = parts[n]
+            if (name ~ /^(bash|sh|python3?)$/ && $3 != "" && $3 !~ /^-/) {
+                n = split($3, parts, "/"); name = parts[n]
+            }
+            print pid, name
+        }'
+}
+
+if [[ "${1-}" == "--all" ]]; then
+    names | collect | report "все процессы пользователя"
+else
+    names |
+        awk -v re="$SESSION_RE" '$2 ~ re' |
+        collect | report "сессия без прикладных программ"
+fi
+
+printf '\n'
+free -m | awk 'NR<=2 { printf "%s\n", $0 }'

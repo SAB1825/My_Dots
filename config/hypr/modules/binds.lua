@@ -9,7 +9,7 @@ local mainMod = vars.mainMod
 hl.bind(mainMod .. " + Return", hl.dsp.exec_cmd(vars.terminal))
 hl.bind(mainMod .. " + R",      hl.dsp.exec_cmd(vars.menu))
 hl.bind(mainMod .. " + space",  hl.dsp.exec_cmd(vars.menu))
-hl.bind(mainMod .. " + B",      hl.dsp.exec_cmd("qs -c minimal ipc call shell bar"))
+hl.bind(mainMod .. " + B",      hl.dsp.exec_cmd("/home/sabari/.local/bin/hyprdo dispatch global quickshell:bluetooth"))
 
 -- Window management ---------------------------------------------------------
 
@@ -61,7 +61,9 @@ hl.bind("XF86AudioPlay",         hl.dsp.exec_cmd("playerctl play-pause"), { lock
 hl.bind("XF86AudioPrev",         hl.dsp.exec_cmd("playerctl previous"),   { locked = true })
 
 -- Quickshell wallpaper picker.
-hl.bind(mainMod .. " + W", hl.dsp.exec_cmd("qs -c minimal ipc call shell wallpapers"))
+hl.bind(mainMod .. " + W", hl.dsp.exec_cmd("/home/sabari/.local/bin/hyprdo dispatch global quickshell:wallpapers"))
 
 -- Quickshell theme picker.
-hl.bind(mainMod .. " + C", hl.dsp.exec_cmd("qs -c minimal ipc call shell themes"))
+hl.bind(mainMod .. " + C", hl.dsp.exec_cmd("/home/sabari/.local/bin/hyprdo dispatch global quickshell:launcherCalc"))
+
+require("modules.shell")
