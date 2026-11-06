@@ -89,6 +89,7 @@ def main():
         (ROOT / 'config/hypr/scripts/wallpaper/wallpaper-index.sh').read_bytes(), True)
     put(CONFIG / 'cava/config-bar', (ROOT / 'config/cava/config-bar').read_bytes())
     (HYPR / 'config').mkdir(parents=True, exist_ok=True)
+    put(CONFIG / 'kitty/kitty.conf', (ROOT.parent / 'kitty/kitty.conf').read_bytes())
     # Choose Quickshell's lock; hyprlock supplies its PAM authentication config.
     text(HOME / '.local/state/hypr/lock-choice', 'qs\n')
     wallpaper = ''
