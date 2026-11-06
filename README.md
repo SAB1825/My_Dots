@@ -1,16 +1,15 @@
 # Sabari’s dotfiles
 
-Hyprland, Quickshell, and Zsh configuration for Arch Linux.
+Hyprland, Quickshell, Neovim, and Zsh configuration for Arch Linux.
 
 ```text
 config/
   hypr/                 Hyprland configuration and Lua modules
+  nvim/                 Neovim configuration and plugin lockfile
   quickshell/minimal/   Bar, launcher, themes, and panels
 .zshrc                  Zsh configuration
 packages/               Installed package inventories
 ```
-
-Neovim is intentionally excluded.
 
 ## Setup
 
@@ -20,17 +19,17 @@ cd ~/dotfiles
 ```
 
 The repository contains copies of the configs. Back up and move aside your existing
-`~/.config/hypr`, `~/.config/quickshell`, and `~/.zshrc` before creating these links:
+`~/.config/hypr`, `~/.config/quickshell`, `~/.config/nvim`, and `~/.zshrc` before creating these links:
 
 ```sh
 mkdir -p "$HOME/.config"
 ln -s "$HOME/dotfiles/config/hypr" "$HOME/.config/hypr"
 ln -s "$HOME/dotfiles/config/quickshell" "$HOME/.config/quickshell"
+ln -s "$HOME/dotfiles/config/nvim" "$HOME/.config/nvim"
 ln -s "$HOME/dotfiles/.zshrc" "$HOME/.zshrc"
 ```
 
 After linking, edits to your active configs also appear in this repository.
-The repository reorganization itself does not change your active configuration.
 
 ## Dependencies
 
@@ -43,6 +42,8 @@ Hyprland uses its Lua API and needs a compatible build. Adjust monitor settings 
 See [Quickshell setup](config/quickshell/minimal/README.md) and
 [theme setup](config/quickshell/minimal/THEMES.md). Generated themes, local state,
 wallpapers, caches, and historical backups are excluded.
+
+See [Neovim setup](config/nvim/README.md) for editor dependencies and keymaps.
 
 The `panels/` panel components are adapted from Ricelin, rather than a separate
 Ricelin configuration. Upstream MIT licenses and attribution are retained.

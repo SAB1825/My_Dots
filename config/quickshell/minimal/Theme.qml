@@ -4,14 +4,15 @@ import Quickshell
 import Quickshell.Io
 
 QtObject {
-    readonly property color background: store.palette.background || "#000000"
-    readonly property color surface: store.palette.surface || "#111111"
-    readonly property color hover: store.palette.hover || "#2a2a2a"
-    readonly property color text: store.palette.text || "#ffffff"
-    readonly property color muted: store.palette.muted || "#aaaaaa"
-    readonly property color accent: store.palette.accent || "#ffffff"
-    readonly property color glow: store.palette.glow || "#dddddd"
-    readonly property color accentText: store.palette.onAccent || "#000000"
+    // Keep shell surfaces monochrome, independent of application/wallpaper themes.
+    readonly property color background: "#000000"
+    readonly property color surface: "#111111"
+    readonly property color hover: "#2a2a2a"
+    readonly property color text: "#ffffff"
+    readonly property color muted: "#aaaaaa"
+    readonly property color accent: "#ffffff"
+    readonly property color glow: "#dddddd"
+    readonly property color accentText: "#000000"
     readonly property string name: store.name
     readonly property string themeId: store.themeId
     readonly property string font: "JetBrainsMono Nerd Font"

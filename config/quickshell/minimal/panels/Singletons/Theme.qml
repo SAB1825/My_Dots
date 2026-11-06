@@ -3,7 +3,7 @@ import QtQuick
 import Quickshell
 import "../../" as Shell
 
-// Panel design tokens follow the shell palette, including live theme changes.
+// Panel design tokens follow the fixed monochrome shell palette.
 Singleton {
     readonly property bool dyn: false
 

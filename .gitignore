@@ -14,9 +14,8 @@ node_modules/
 backups/
 /config/quickshell/minimal/generated/
 
-# Keep Neovim local until it is ready to publish.
-/nvim/
-/config/nvim/
+# Neovim runtime logs.
+/config/nvim/*.log
 
 # Historical configuration snapshots.
 .backup/

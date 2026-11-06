@@ -13,7 +13,8 @@ Escape or clicking outside closes panels.
 - Fuzzy launcher with usage ranking, calculator and keyboard control.
 - Landscape wallpaper filmstrip: scroll/drag/arrows to browse; click the selected
   card or press Enter to apply. Local images come from ~/Pictures/Wallpapers.
-- Five shared themes: Catppuccin Mocha, Monochrome, Gruvbox Dark, Nord, Dynamic.
+- The bar and its panels stay black and white regardless of wallpaper or theme.
+- Five application themes: Catppuccin Mocha, Monochrome, Gruvbox Dark, Nord, Dynamic.
 - MPRIS/CAVA playback and session/sound panels, including EQ, app volumes,
   output routing and microphone controls. See [panels/README.md](panels/README.md).
 
