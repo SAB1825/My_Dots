@@ -4,6 +4,7 @@ conform.setup({
     formatters_by_ft = {
         lua = { "stylua" },
         go = { "gofmt" },
+        qml = { "qmlformat" },
     },
     format_on_save = {
         timeout_ms = 3000,

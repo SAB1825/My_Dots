@@ -133,7 +133,7 @@ Singleton {
     }
 
     function appColor(app) {
-        return Qt.hsla(root.appHue(app), Colors.statusSat, Colors.statusLight, 1);
+        return Colors.accent;
     }
 
     function appLetter(app) {

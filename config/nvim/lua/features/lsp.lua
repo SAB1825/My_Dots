@@ -6,6 +6,10 @@ capabilities = vim.tbl_deep_extend("force", capabilities, require("mini.completi
 
 vim.lsp.config("*", { capabilities = capabilities })
 
+vim.lsp.config("qmlls", {
+    cmd = { vim.fn.executable("qmlls") == 1 and "qmlls" or "qmlls6" },
+})
+
 vim.lsp.config("lua_ls", {
     root_dir = function(bufnr, on_dir)
         local filename = vim.api.nvim_buf_get_name(bufnr)
@@ -48,4 +52,5 @@ vim.lsp.enable({
     "marksman",
     "gopls",
     "rust_analyzer",
+    "qmlls",
 })

@@ -1,5 +1,7 @@
 local treesitter = require("nvim-treesitter")
 
+vim.treesitter.language.register("qmljs", "qml")
+
 local ensure_installed = {
     "go",
     "typescript",
@@ -8,6 +10,7 @@ local ensure_installed = {
     "html",
     "css",
     "json",
+    "qmljs",
     "bash",
     "http",
     "dockerfile",

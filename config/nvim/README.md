@@ -35,8 +35,12 @@ This prevents local files from shadowing plugin modules such as `oil`.
 | `df` | Show line diagnostics |
 | `Space gg` / `Space gd` | Git status / diff |
 
-Formatting also runs on save: StyLua for Lua, gofmt for Go, and LSP fallback for
+Formatting also runs on save: StyLua for Lua, gofmt for Go, qmlformat for QML, and LSP fallback for
 other file types. Install formatter executables separately; `:ConformInfo` shows
 their availability. Errors and warnings appear after pausing on a line for 500 ms
 in Normal mode.
+
+QML uses the `qmljs` Treesitter parser and Qt's QML language server for
+completion, navigation, and diagnostics. Install Qt's `qmlls` (or `qmlls6`) and
+`qmlformat` executables separately. The parser installs automatically on startup.
 

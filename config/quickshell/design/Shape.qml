@@ -7,7 +7,7 @@ import "root:/services"
 Singleton {
     id: root
 
-    readonly property int knob: Prefs.apple ? 13 : root.compress(Prefs.cornerRadius)
+    readonly property int knob: Math.round((Prefs.apple ? 13 : root.compress(Prefs.cornerRadius)) * 0.75)
 
     function compress(value) {
         const v = Number(value);

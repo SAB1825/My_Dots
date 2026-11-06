@@ -592,6 +592,7 @@ Item {
             anchors.verticalCenter: parent ? parent.verticalCenter : undefined
 
             Tip {
+                cursorShape: Qt.PointingHandCursor
                 text: Network.wired
                     ? (Network.wiredName !== "" ? Network.wiredName : I18n.t("isle.net.cable"))
                       + I18n.t("bar.clickNet")
@@ -640,6 +641,7 @@ Item {
             anchors.verticalCenter: parent ? parent.verticalCenter : undefined
 
             Tip {
+                cursorShape: Qt.PointingHandCursor
                 text: Bt.connectedCount > 0
                     ? Bt.label(Bt.primary)
                       + (Bt.primary && Bt.primary.batteryAvailable
@@ -654,6 +656,7 @@ Item {
                 anchors.fill: parent
                 anchors.margins: -4
                 cursorShape: Qt.PointingHandCursor
+                hoverEnabled: true
                 onClicked: kit.panelDo("net", p => p.toggle("bt"))
             }
         }
@@ -768,12 +771,14 @@ Item {
             readonly property bool muted: sink && sink.audio ? sink.audio.muted : false
 
             Tip {
+                cursorShape: Qt.PointingHandCursor
                 text: (volRow.muted ? I18n.t("audio.soundOff")
                                     : I18n.t("audio.volume") + Math.round(volRow.vol * 100) + "%")
                       + I18n.t("bar.clickVol")
             }
 
             Text {
+                id: volumeGlyph
                 text: volRow.muted ? "󰝟" : "󰕾"
                 color: volRow.muted ? Colors.bad : Colors.fgDim
                 opacity: volRow.muted ? 1.0 : 0.75
@@ -787,16 +792,17 @@ Item {
                 text: Math.round(volRow.vol * 100) + "%"
             }
 
-            TapHandler {
+            MouseArea {
+                parent: volumeGlyph
+                width: volRow.width
+                height: volRow.height
                 cursorShape: Qt.PointingHandCursor
-                onTapped: {
+                hoverEnabled: true
+                onWheel: wheel => kit.scrollVolume(wheel)
+                onClicked: {
                     const a = volRow.sink && volRow.sink.audio;
                     if (a) a.muted = !a.muted;
                 }
-            }
-
-            WheelHandler {
-                onWheel: wheel => kit.scrollVolume(wheel)
             }
         }
     }
