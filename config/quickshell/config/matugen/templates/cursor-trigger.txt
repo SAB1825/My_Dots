@@ -1,2 +1,0 @@
-accent={{colors.primary.default.hex}}
-surface={{colors.surface.default.hex}}

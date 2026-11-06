@@ -1,6 +1,5 @@
 import Quickshell
 import Quickshell.Hyprland
-import Quickshell.Services.SystemTray
 import Quickshell.Services.UPower
 import Quickshell.Services.Pipewire
 import Quickshell.Widgets
@@ -43,12 +42,22 @@ Item {
         });
     }
 
+    // Shared by the visualizer and speaker indicator.
+    function scrollVolume(wheel) {
+        const delta = wheel.angleDelta.y || wheel.pixelDelta.y;
+        const audio = Pipewire.defaultAudioSink?.audio;
+        if (!audio || delta === 0) return;
+        const steps = wheel.angleDelta.y ? wheel.angleDelta.y / 120 : delta / 40;
+        audio.volume = Math.max(0, Math.min(1, audio.volume + steps * 0.05));
+        if (delta > 0) audio.muted = false;
+        wheel.accepted = true;
+    }
+
     function component(type) {
         switch (type) {
         case "workspaces":  return workspaces;
         case "media":       return media;
         case "clock":       return clock;
-        case "tray":        return tray;
         case "network":     return network;
         case "bluetooth":   return bluetooth;
         case "vpn":         return vpn;
@@ -319,7 +328,7 @@ Item {
 
             Tip {
                 text: Media.has
-                    ? Media.label + I18n.t("bar.clickMedia") + I18n.t("bar.wheelTrack")
+                    ? Media.label + I18n.t("bar.clickMedia") + " · Scroll to adjust volume"
                     : ""
             }
 
@@ -381,8 +390,8 @@ Item {
                 Row {
                     id: spectrum
                     visible: mediaMod.showSpectrum
-                    width: parent.width - (mediaMod.showCover ? 29 : 0)
-                    height: 18
+                    width: Math.min(64, (parent.width - (mediaMod.showCover ? 29 : 0)) * 0.48)
+                    height: 20
                     anchors.verticalCenter: parent.verticalCenter
                     spacing: 2
 
@@ -413,26 +422,29 @@ Item {
                                 if (!spectrum.holding) return 0;
                                 const v = Cava.smooth[index];
                                 if (v === undefined) return 0;
-                                return Math.min(1, v * 1.7);
+                                return Math.min(1, Math.sqrt(v) * 1.15);
                             }
 
                             width: spectrum.barWidth
                             radius: width / 2
-                            anchors.verticalCenter: parent.verticalCenter
-
-                            height: Math.max(width, level * spectrum.height)
-
-                            color: Media.playing ? Colors.accent : Colors.fgDim
-                            opacity: Media.playing ? 0.55 + level * 0.45 : 0.35
-
-                            Behavior on color { ColorAnimation { duration: 250 } }
+                            anchors.bottom: parent.bottom
+                            anchors.bottomMargin: 2
+                            height: Math.max(3, level * (spectrum.height - 4))
+                            opacity: Media.playing ? 0.9 : 0.3
+                            gradient: Gradient {
+                                GradientStop { position: 0; color: Colors.accentAlt }
+                                GradientStop { position: 1; color: Colors.accent }
+                            }
+                            Behavior on height {
+                                NumberAnimation { duration: 65; easing.type: Easing.OutQuad }
+                            }
                         }
                     }
                 }
 
                 Marquee {
-                    visible: !mediaMod.showSpectrum
-                    width: parent.width - (mediaMod.showCover ? 29 : 0)
+                    width: Math.max(0, parent.width - (mediaMod.showCover ? 29 : 0)
+                                    - (mediaMod.showSpectrum ? spectrum.width + 7 : 0))
                     height: 18
                     anchors.verticalCenter: parent.verticalCenter
                     text: Media.label
@@ -454,10 +466,7 @@ Item {
             }
 
             WheelHandler {
-                onWheel: wheel => {
-                    if (wheel.angleDelta.y > 0) Media.previous();
-                    else Media.next();
-                }
+                onWheel: wheel => kit.scrollVolume(wheel)
             }
         }
     }
@@ -578,51 +587,6 @@ Item {
                 anchors.fill: parent
                 cursorShape: Qt.PointingHandCursor
                 onClicked: kit.panelDo("calendar", p => p.toggle())
-            }
-        }
-    }
-
-    Component {
-        id: tray
-
-        Row {
-            property var item: null
-            spacing: 9
-            property bool shown: SystemTray.items.values.length > 0
-            visible: shown
-            anchors.verticalCenter: parent ? parent.verticalCenter : undefined
-
-            Repeater {
-                model: SystemTray.items
-
-                IconImage {
-                    required property var modelData
-                    source: {
-                        const i = modelData.icon;
-                        if (!i) return "";
-                        if (i.startsWith("/") || i.includes("://") || i.includes("?"))
-                            return i;
-                        return Quickshell.iconPath(i, "application-x-executable");
-                    }
-                    implicitSize: BarConfig.opt(item, "size") || 15
-                    anchors.verticalCenter: parent.verticalCenter
-
-                    Tip {
-                        text: modelData.tooltipTitle && modelData.tooltipTitle !== ""
-                            ? modelData.tooltipTitle
-                            : (modelData.title ? modelData.title : "")
-                    }
-
-                    MouseArea {
-                        anchors.fill: parent
-                        acceptedButtons: Qt.LeftButton | Qt.RightButton
-                        cursorShape: Qt.PointingHandCursor
-                        onClicked: function (mouse) {
-                            if (mouse.button === Qt.LeftButton) modelData.activate();
-                            else modelData.secondaryActivate();
-                        }
-                    }
-                }
             }
         }
     }
@@ -841,12 +805,7 @@ Item {
             }
 
             WheelHandler {
-                onWheel: wheel => {
-                    const a = volRow.sink && volRow.sink.audio;
-                    if (!a) return;
-                    const step = wheel.angleDelta.y > 0 ? 0.02 : -0.02;
-                    a.volume = Math.max(0, Math.min(1, a.volume + step));
-                }
+                onWheel: wheel => kit.scrollVolume(wheel)
             }
         }
     }

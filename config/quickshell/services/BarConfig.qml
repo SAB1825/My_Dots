@@ -29,10 +29,6 @@ Singleton {
                 feedback: { type: "bool", def: true }
             }
         },
-        "tray": {
-            title: I18n.t("barc.tray"), glyph: "󰀻", group: "system",
-            opts: { size: { type: "int", def: 15, min: 10, max: 24 } }
-        },
         "network": {
             title: I18n.t("barc.network"), glyph: "󰤨", group: "net",
             opts: { label: { type: "bool", def: false } }
@@ -286,7 +282,11 @@ Singleton {
     function islands(zone, screen) {
         const c = root.cfg(screen);
         const z = c && c.zones ? c.zones[zone] : null;
-        return z ? z : [];
+        // Filter saved layouts as well as the default layout.
+        return z ? z.map(island => ({
+            key: island.key,
+            items: island.items.filter(item => item.type !== "tray")
+        })).filter(island => island.items.length > 0) : [];
     }
 
     function defaults() {
@@ -306,7 +306,7 @@ Singleton {
             ],
             right: [
                 isle([
-                    m("outbound"), m("recorder"), m("tray"), m("sep"),
+                    m("outbound"), m("recorder"),
                     m("vpn"), m("network"), m("bluetooth"), m("mic"),
                     m("volume"), m("sep"),
                     m("peripherals"), m("keyboard"), m("battery")

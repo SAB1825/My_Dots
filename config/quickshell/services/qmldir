@@ -4,7 +4,6 @@ singleton Brightness Brightness.qml
 singleton Bt Bt.qml
 singleton Bye Bye.qml
 singleton Cava Cava.qml
-singleton DeskLayout DeskLayout.qml
 singleton Disk Disk.qml
 singleton Dnd Dnd.qml
 singleton Equalizer Equalizer.qml
@@ -16,8 +15,6 @@ singleton Idle Idle.qml
 singleton IslandConfig IslandConfig.qml
 singleton Keyboard Keyboard.qml
 singleton Media Media.qml
-singleton Lyrics Lyrics.qml
-singleton MicLevel MicLevel.qml
 singleton Network Network.qml
 singleton NotifHistory NotifHistory.qml
 singleton NotifKind NotifKind.qml
@@ -38,9 +35,7 @@ singleton Updates Updates.qml
 singleton Vpn Vpn.qml
 singleton Weather Weather.qml
 singleton Wellbeing Wellbeing.qml
-singleton Privacy Privacy.qml
 singleton IslandBus IslandBus.qml
-singleton DotsUpdate DotsUpdate.qml
 singleton Reminders Reminders.qml
 singleton Notes Notes.qml
 singleton Aula Aula.qml

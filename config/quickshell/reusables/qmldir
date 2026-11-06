@@ -1,6 +1,5 @@
 Field Field.qml
 LivingShape LivingShape.qml
-HandClock HandClock.qml
 HoldButton HoldButton.qml
 IconButton IconButton.qml
 Marquee Marquee.qml
@@ -8,7 +7,6 @@ OrbitGraph OrbitGraph.qml
 OrbitNode OrbitNode.qml
 ProgressRing ProgressRing.qml
 RectRing RectRing.qml
-Ring Ring.qml
 RollText RollText.qml
 Segment Segment.qml
 Slider Slider.qml
@@ -16,9 +14,5 @@ Switch Switch.qml
 TimerDial TimerDial.qml
 Vinyl Vinyl.qml
 WaveMeter WaveMeter.qml
-BeatRing BeatRing.qml
-Spectrum Spectrum.qml
-FaceBadge FaceBadge.qml
 WeatherHold WeatherHold.qml
-OptionRow OptionRow.qml
 ArtTint ArtTint.qml
