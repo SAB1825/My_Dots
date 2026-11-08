@@ -293,10 +293,10 @@ Singleton {
     function islands(zone, screen) {
         const c = root.cfg(screen);
         const z = c && c.zones ? c.zones[zone] : null;
-        // Filter saved layouts as well as the default layout.
+        // Hide removed indicators in saved layouts as well as the default layout.
         return z ? z.map(island => ({
             key: island.key,
-            items: island.items.filter(item => item.type !== "tray")
+            items: island.items.filter(item => !["tray", "files", "outbound"].includes(item.type))
         })).filter(island => island.items.length > 0) : [];
     }
 
@@ -311,13 +311,13 @@ Singleton {
             left: [
                 isle([m("workspaces")]),
                 isle([m("media")]),
-                isle([m("files"), m("sysRings"), m("procs")])
+                isle([m("sysRings"), m("procs")])
             ],
             center: [
                 isle([m("clock", { format: "ddd, d MMM HH:mm", seconds: false, feedback: false })])
             ],
             right: [
-                isle([m("outbound"), m("recorder"), m("vpn"), m("network"), m("bluetooth")]),
+                isle([m("recorder"), m("vpn"), m("network"), m("bluetooth")]),
                 isle([m("volume"), m("mic"), m("battery"), m("peripherals")]),
                 isle([m("timer"), m("notifs"), m("powerMenu")])
             ]

@@ -101,7 +101,7 @@ Item {
             property bool shown: true
             readonly property var button: BarConfig.panelButtons[item ? item.type : ""]
             text: button ? button.glyph : ""
-            color: Colors.fgDim
+            color: Colors.accent
             font.family: kit.mono
             font.pixelSize: kit.glyphSize
             anchors.verticalCenter: parent ? parent.verticalCenter : undefined
@@ -119,7 +119,7 @@ Item {
     SystemClock { id: clockMinutes; precision: SystemClock.Minutes }
 
     component Glyph: Text {
-        color: Colors.fgDim
+        color: Colors.accent
         opacity: 0.75
         font.family: kit.mono
         font.pixelSize: kit.glyphSize
@@ -634,7 +634,7 @@ Item {
 
             Text {
                 text: Network.glyph
-                color: Network.online ? Colors.fgDim : Colors.bad
+                color: Network.online ? Colors.accent : Colors.bad
                 opacity: Network.online ? 0.75 : 1.0
                 font.family: kit.mono
                 font.pixelSize: kit.glyphSize
@@ -664,7 +664,7 @@ Item {
             property bool shown: Bt.present && (Bt.powered || Bt.connectedCount > 0)
             visible: shown
             text: Bt.glyph
-            color: Bt.connectedCount > 0 ? Colors.accentAlt : Colors.fgDim
+            color: Bt.connectedCount > 0 ? Colors.accentAlt : Colors.accent
             opacity: Bt.connectedCount > 0 ? 0.95 : 0.6
             font.family: kit.mono
             font.pixelSize: kit.glyphSize
@@ -812,7 +812,7 @@ Item {
             Text {
                 id: volumeGlyph
                 text: volRow.muted ? "󰝟" : "󰕾"
-                color: volRow.muted ? Colors.bad : Colors.fgDim
+                color: volRow.muted ? Colors.bad : Colors.accent
                 opacity: volRow.muted ? 1.0 : 0.75
                 font.family: kit.mono
                 font.pixelSize: kit.glyphSize
@@ -1116,7 +1116,7 @@ Item {
 
             Glyph {
                 text: NotifHistory.unseen > 0 ? "󰂚" : "󰂜"
-                color: NotifHistory.unseen > 0 ? Colors.accent : Colors.fgDim
+                color: NotifHistory.unseen > 0 ? Colors.accentAlt : Colors.accent
             }
             Label {
                 visible: BarConfig.opt(item, "count") && NotifHistory.unseen > 0
@@ -1138,7 +1138,7 @@ Item {
             property var item: null
             property bool shown: true
             text: Dnd.active ? "󰂛" : "󰂚"
-            color: Dnd.active ? Colors.warn : Colors.fgDim
+            color: Dnd.active ? Colors.warn : Colors.accent
             opacity: Dnd.active ? 1 : 0.7
             font.family: kit.mono
             font.pixelSize: kit.glyphSize
