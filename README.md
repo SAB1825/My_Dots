@@ -55,4 +55,4 @@ theme wrappers, which must be installed under `~/.local/share/themes/`.
 ## Credits
 
 Reference: [fedyaqq34356/hyprdots](https://github.com/fedyaqq34356/hyprdots/tree/main).
-Quickshell panel components are adapted from Ricelin; upstream MIT licenses and attribution are retained.
+Quickshell panel components are adapted from hyprdots;

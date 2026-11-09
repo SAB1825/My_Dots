@@ -105,7 +105,7 @@ Scope {
     Process {
         id: lister
         command: ["sh", "-c",
-            "find '" + root.dir + "' -maxdepth 1 -type f " +
+            "find -H '" + root.dir + "' -maxdepth 1 -type f " +
             "\\( -iname '*.jpg' -o -iname '*.jpeg' -o -iname '*.png' -o -iname '*.webp' \\) | sort"]
         stdout: StdioCollector {
             onStreamFinished: {
@@ -127,7 +127,7 @@ Scope {
         id: thumber
         command: ["sh", "-c",
             "mkdir -p '" + root.thumbDir + "'; " +
-            "find '" + root.dir + "' -maxdepth 1 -type f " +
+            "find -H '" + root.dir + "' -maxdepth 1 -type f " +
             "\\( -iname '*.jpg' -o -iname '*.jpeg' -o -iname '*.png' -o -iname '*.webp' \\) " +
             "| while IFS= read -r wp; do t='" + root.thumbDir + "'/$(basename \"$wp\"); " +
             "[ -f \"$t\" ] && continue; " +
