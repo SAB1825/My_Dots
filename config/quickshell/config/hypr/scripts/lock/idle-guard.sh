@@ -53,7 +53,7 @@ fi
 
 case "$ACTION" in
     lock)
-        pidof hyprlock >/dev/null || "$CONF/scripts/lock.sh"
+        pidof hyprlock >/dev/null || "$CONF/scripts/lock/lock.sh"
         ;;
     dpms-off)
         hyprdo dispatch dpms off

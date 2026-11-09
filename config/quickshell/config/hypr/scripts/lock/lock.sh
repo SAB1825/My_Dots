@@ -54,15 +54,15 @@ lock_begin() {
 lock_end() {
     echo 0 > "$FLAG"
     echo 0 > "$MISSED"
-    command -v qs >/dev/null 2>&1 && qs ipc -c f call curtain up >/dev/null 2>&1
+    command -v qs >/dev/null 2>&1 && qs ipc call curtain up >/dev/null 2>&1
 }
 
 if [[ "$choice" == "qs" ]]; then
-    "$CONFIG_DIR/scripts/lock-prepare.sh" 2>/dev/null
+    "$CONFIG_DIR/scripts/lock/lock-prepare.sh" 2>/dev/null
 
     if command -v qs >/dev/null 2>&1; then
         lock_begin
-        if qs ipc -c f call lock lock >/dev/null 2>&1; then
+        if qs ipc call lock lock >/dev/null 2>&1; then
             exit 0
         fi
         echo 0 > "$FLAG"
@@ -72,7 +72,7 @@ if [[ "$choice" == "qs" ]]; then
         "Quickshell did not answer, locking with hyprlock" 2>/dev/null
 fi
 
-"$CONFIG_DIR/scripts/lock-prepare.sh" 2>/dev/null
+"$CONFIG_DIR/scripts/lock/lock-prepare.sh" 2>/dev/null
 lock_begin
 hyprlock "$@"
 status=$?
