@@ -1,0 +1,11 @@
+{
+  "mosaicFactor": 14,
+  "blurRadius": 64,
+  "zoomFactor": 2,
+  "copyToDisk": false,
+  "copyOnSave": false,
+  "skipSaveDialog": true,
+  "saveDir": "",
+  "language": "",
+  "toolStyle": {}
+}

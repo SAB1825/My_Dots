@@ -21,3 +21,7 @@ backups/
 
 # Historical configuration snapshots.
 .backup/
+
+# Wallpaper-derived palettes; keep templates and reload helpers instead.
+/config/session/theme-sync/generated.css
+/config/session/theme-sync/Wallpaper.colors
