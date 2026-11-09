@@ -20,9 +20,26 @@ Singleton {
             return;
         root.pending = command;
         root.shown = true;
+        fire.restart();
     }
 
-    Process { id: runner }
+    Process {
+        id: runner
+        stderr: StdioCollector {
+            onStreamFinished: {
+                if (text.trim() !== "")
+                    console.warn("Session action:", text.trim());
+            }
+        }
+        onExited: code => {
+            root.shown = false;
+            if (code !== 0)
+                console.warn("Session action failed with exit code", code);
+        }
+        onRunningChanged: {
+            if (!running) root.shown = false;
+        }
+    }
 
     Timer {
         id: fire
@@ -104,7 +121,6 @@ Singleton {
                 }
             }
 
-            Component.onCompleted: fire.start()
         }
     }
 }

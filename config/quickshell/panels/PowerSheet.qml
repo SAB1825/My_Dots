@@ -17,13 +17,13 @@ Scope {
         { key: "l", glyph: "󰌾", label: I18n.t("power.lock"), farewell: false,
           run: ["/bin/sh", "-c", Quickshell.env("HOME") + "/.config/hypr/scripts/lock/lock.sh"] },
         { key: "s", glyph: "󰒲", label: I18n.t("power.sleep"), farewell: false,
-          run: ["loginctl", "suspend"] },
+          run: ["systemctl", "suspend"] },
         { key: "e", glyph: "󰗽", label: I18n.t("power.logout"), farewell: true,
           run: ["hyprdo", "dispatch", "exit"] },
         { key: "r", glyph: "󰜉", label: I18n.t("power.reboot"), farewell: true,
-          run: ["loginctl", "reboot"] },
+          run: ["systemctl", "reboot"] },
         { key: "p", glyph: "󰐥", label: I18n.t("power.shutdown"), farewell: true,
-          run: ["loginctl", "poweroff"] }
+          run: ["systemctl", "poweroff"] }
     ]
 
     function toggle() { phase === "open" ? close() : open(); }

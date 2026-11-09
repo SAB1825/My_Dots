@@ -25,7 +25,7 @@ Scope {
         {
             key: "s", glyph: "󰒲", label: I18n.t("power.sleep"),
             hint: I18n.t("power.sleepSub"),
-            run: ["loginctl", "suspend"]
+            run: ["systemctl", "suspend"]
         },
         {
             key: "e", glyph: "󰗽", label: I18n.t("power.logout"),
@@ -36,13 +36,13 @@ Scope {
             key: "r", glyph: "󰜉", label: I18n.t("power.reboot"),
             hint: I18n.t("power.warn"),
             danger: true,
-            run: ["loginctl", "reboot"]
+            run: ["systemctl", "reboot"]
         },
         {
             key: "p", glyph: "󰐥", label: I18n.t("power.shutdown"),
             hint: I18n.t("power.warn"),
             danger: true,
-            run: ["loginctl", "poweroff"]
+            run: ["systemctl", "poweroff"]
         }
     ]
 
