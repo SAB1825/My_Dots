@@ -1,89 +1,100 @@
 {
   "$schema": "https://github.com/fastfetch-cli/fastfetch/raw/dev/doc/json_schema.json",
   "logo": {
-    "type": "data",
-    "source": "                   $2.  *\n             $1_..._\n           .'     `.\n          /   .-\"\"  \\\n          |  /       |\n          \\  `.___.' /\n           `-.___.-'\n  $2.                  .\n           $3/\\\n      /\\  /  \\    /\\\n     /  \\/    \\  /  \\\n $1___/    \\     \\/    \\___\n $3~~~~~~~~~~~~~~~~~~~~~~~~\n     $2.    .    .    .",
+    "type": "kitty-direct",
+    "source": "~/.config/fastfetch/gojo.png",
+    "width": 35,
+    "height": 16,
     "padding": {
       "top": 1,
       "left": 1,
-      "right": 4
-    },
-    "color": {
-      "1": "#c4b5fd",
-      "2": "#94a3b8",
-      "3": "#5eead4"
+      "right": 7
     }
   },
   "display": {
     "separator": "  ",
     "key": {
-      "width": 10
+      "width": 12
     },
     "color": {
-      "keys": "#94a3b8",
-      "title": "#c4b5fd",
-      "output": "#e2e8f0"
+      "keys": "#9ab1cb",
+      "title": "#ced6df",
+      "separator": "#666666"
     }
   },
   "modules": [
     "break",
+    "break",
     {
       "type": "title",
-      "format": "{#1}{##c4b5fd}{user-name}{##94a3b8} @ {##5eead4}{host-name}{#}"
+      "format": "{user-name-colored}{at-symbol-colored}{host-name-colored}"
     },
-    {
-      "type": "custom",
-      "format": "{##94a3b8}\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500{#}"
-    },
-    {
-      "type": "custom",
-      "format": "{##5eead4}SYSTEM{#}"
-    },
+    "break",
     {
       "type": "os",
-      "key": "os"
+      "key": "  OS",
+      "format": "{pretty-name} {arch}"
     },
     {
       "type": "kernel",
-      "key": "kernel",
+      "key": "  Kernel",
       "format": "{release}"
     },
     {
       "type": "uptime",
-      "key": "uptime"
+      "key": "󰥔  Uptime"
+    },
+    {
+      "type": "packages",
+      "key": "󰏖  Pkgs",
+      "format": "{pacman} pacman · {flatpak-all} flatpak"
+    },
+    "break",
+    {
+      "type": "wm",
+      "key": "  WM",
+      "format": "{pretty-name} · {protocol-name}"
+    },
+    {
+      "type": "shell",
+      "key": "  Shell"
+    },
+    {
+      "type": "terminal",
+      "key": "  Term"
+    },
+    "break",
+    {
+      "type": "cpu",
+      "key": "  CPU",
+      "format": "{name} · {cores-physical}C/{cores-logical}T"
+    },
+    {
+      "type": "gpu",
+      "key": "󰢮  GPU",
+      "hideType": "integrated",
+      "format": "{name}"
     },
     {
       "type": "memory",
-      "key": "memory",
+      "key": "  RAM",
       "format": "{used} / {total}"
+    },
+    {
+      "type": "disk",
+      "key": "󰋊  Disk",
+      "folders": "/",
+      "format": "{size-used} / {size-total}"
+    },
+    {
+      "type": "battery",
+      "key": "󰁹  Battery",
+      "format": "{capacity} · {status}"
     },
     "break",
     {
       "type": "custom",
-      "format": "{##c4b5fd}SESSION{#}"
-    },
-    {
-      "type": "wm",
-      "key": "desktop",
-      "format": "{1}"
-    },
-    {
-      "type": "terminal",
-      "key": "terminal",
-      "format": "{1}"
-    },
-    {
-      "type": "shell",
-      "key": "shell",
-      "format": "{1}"
-    },
-    {
-      "type": "custom",
-      "format": "{##94a3b8}\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500{#}"
-    },
-    {
-      "type": "custom",
-      "format": "{##c4b5fd}\u25cf  {##a5b4fc}\u25cf  {##93c5fd}\u25cf  {##5eead4}\u25cf  {##f9a8d4}\u25cf  {##e2e8f0}\u25cf{#}"
+      "format": "\u001b[38;2;206;214;223m●  \u001b[38;2;154;177;203m●  \u001b[38;2;147;150;200m●  \u001b[38;2;164;204;209m●  \u001b[38;2;145;153;161m●\u001b[0m"
     },
     "break"
   ]

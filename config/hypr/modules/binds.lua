@@ -1,6 +1,6 @@
  -- Keybindings.
 --
--- Window-management actions are on ALT so the SUPER+key set stays free.
+-- Window-management shortcuts, including ALT aliases.
 
 local vars    = require("modules.variables")
 local mainMod = vars.mainMod
@@ -16,6 +16,9 @@ hl.bind(mainMod .. " + SHIFT + S", hl.dsp.exec_cmd("/home/sabari/.local/bin/rish
 
 hl.bind(mainMod .. " + Q", hl.dsp.window.close())
 hl.bind("ALT + V",         hl.dsp.window.float({ action = "toggle" }))
+hl.bind(mainMod .. " + SHIFT + F", hl.dsp.window.float({ action = "toggle" }))
+-- Maximize within the usable workspace, keeping the bar visible.
+hl.bind(mainMod .. " + F", hl.dsp.window.fullscreen({ mode = "maximized", action = "toggle" }))
 hl.bind("ALT + P",         hl.dsp.window.pseudo())
 hl.bind("ALT + F",         hl.dsp.exec_cmd(vars.fileManager))
 hl.bind("ALT + SHIFT + M", hl.dsp.exit())

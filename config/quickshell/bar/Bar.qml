@@ -13,23 +13,9 @@ Scope {
 
     property var panels: ({})
     property bool shown: true
-    property int applicationRadius: 23
-
-    Process {
-        running: true
-        command: ["hyprctl", "getoption", "decoration:rounding", "-j"]
-        stdout: StdioCollector {
-            onStreamFinished: {
-                try {
-                    const option = JSON.parse(text);
-                    if (typeof option.int === "number")
-                        root.applicationRadius = Math.max(0, option.int);
-                } catch (error) {
-                    console.warn("Could not read application corner radius:", error);
-                }
-            }
-        }
-    }
+    // shell.qml applies this same setting to application windows. Binding to it
+    // avoids reading Hyprland before the startup rounding update has finished.
+    readonly property int applicationRadius: Math.max(0, Shape.window)
 
     // Clear the frosted-bar rule when restoring the grouped design.
     Process {
@@ -461,6 +447,8 @@ Scope {
                     width: root.applicationRadius
                     height: root.applicationRadius
                     property bool mirrored: parent.atRightEdge
+                    onAvailableChanged: if (available) requestPaint()
+                    onVisibleChanged: if (visible) requestPaint()
                     onMirroredChanged: requestPaint()
                     onWidthChanged: requestPaint()
                     onHeightChanged: requestPaint()
