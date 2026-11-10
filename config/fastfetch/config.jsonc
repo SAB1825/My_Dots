@@ -17,9 +17,9 @@
       "width": 12
     },
     "color": {
-      "keys": "#9ab1cb",
-      "title": "#ced6df",
-      "separator": "#666666"
+      "keys": "blue",
+      "title": "white",
+      "separator": "bright_black"
     }
   },
   "modules": [
@@ -94,7 +94,7 @@
     "break",
     {
       "type": "custom",
-      "format": "\u001b[38;2;206;214;223m●  \u001b[38;2;154;177;203m●  \u001b[38;2;147;150;200m●  \u001b[38;2;164;204;209m●  \u001b[38;2;145;153;161m●\u001b[0m"
+      "format": "\u001b[97m●  \u001b[94m●  \u001b[95m●  \u001b[96m●  \u001b[90m●\u001b[0m"
     },
     "break"
   ]

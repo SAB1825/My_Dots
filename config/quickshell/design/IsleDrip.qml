@@ -87,16 +87,6 @@ Item {
         height: drip.cardH + 120
 
         Item {
-            id: twin
-            property bool isBlob: true
-            width: Math.max(24, Math.min(drip.isleW - 44, 260))
-            height: 8
-            x: drip.cx - width / 2 - host.x
-            y: drip.base - 8 - host.y
-            visible: drip.g > 0.005
-        }
-
-        Item {
             id: body
             property bool isBlob: true
             width: drip.bw

@@ -127,7 +127,7 @@ Item {
     }
 
     component Label: Text {
-        color: Colors.fgDim
+        color: Colors.accentAlt
         font.family: kit.mono
         font.pixelSize: kit.fontSize
         anchors.verticalCenter: parent ? parent.verticalCenter : undefined
@@ -167,7 +167,7 @@ Item {
     }
 
     function tone(v) {
-        return v > 85 ? Colors.bad : v > 60 ? Colors.warn : Colors.fgDim;
+        return v > 85 ? Colors.bad : v > 60 ? Colors.warn : Colors.accentAlt;
     }
 
     Component {
@@ -466,7 +466,7 @@ Item {
                     height: 18
                     anchors.verticalCenter: parent.verticalCenter
                     text: Media.label
-                    color: Colors.fgDim
+                    color: Colors.accentAlt
                     family: kit.mono
                     pixelSize: kit.fontSize
                 }
@@ -532,7 +532,7 @@ Item {
 
                 anchors.centerIn: parent
                 text: Qt.formatDateTime(clockMinutes.date, "ddd, d MMM HH:mm")
-                color: Colors.fg
+                color: Colors.accent
                 font.family: kit.mono
                 font.pixelSize: kit.fontSize + 1
                 font.weight: Font.DemiBold
@@ -589,7 +589,7 @@ Item {
                 RollText {
                     anchors.verticalCenter: parent.verticalCenter
                     text: Feedback.label
-                    color: Colors.fg
+                    color: Colors.accent
                     family: kit.mono
                     pixelSize: kit.fontSize + 1
                 }
@@ -873,7 +873,7 @@ Item {
             color: charging ? Colors.good
                  : pct <= 12 ? Colors.bad
                  : pct <= 25 ? Colors.warn
-                 : Colors.fg
+                 : Colors.accent
             font.family: kit.mono
             font.pixelSize: kit.fontSize
             font.weight: Font.DemiBold
@@ -909,7 +909,7 @@ Item {
             property var item: null
             property bool shown: true
             text: Keyboard.code
-            color: Colors.fgDim
+            color: Colors.accentAlt
             font.family: kit.mono
             font.pixelSize: kit.fontSize - 1
             font.letterSpacing: 0.8
@@ -1351,7 +1351,7 @@ Item {
             property var item: null
             property bool shown: true
             text: Qt.formatDateTime(clockMinutes.date, BarConfig.opt(item, "format"))
-            color: Colors.fgDim
+            color: Colors.accentAlt
             font.family: kit.mono
             font.pixelSize: kit.fontSize
             anchors.verticalCenter: parent ? parent.verticalCenter : undefined
@@ -1389,7 +1389,7 @@ Item {
             }
             Label {
                 text: Timers.soonest ? Timers.human(Timers.left(Timers.soonest)) : ""
-                color: Timers.anyRinging ? Colors.bad : Colors.fgDim
+                color: Timers.anyRinging ? Colors.bad : Colors.accentAlt
             }
 
             TapHandler {

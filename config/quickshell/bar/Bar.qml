@@ -742,7 +742,7 @@ Scope {
                         id: tipText
                         anchors.centerIn: parent
                         text: tips.text
-                        color: Colors.fgDim
+                        color: Colors.accentAlt
                         horizontalAlignment: Text.AlignHCenter
                         font.family: Fonts.mono
                         font.features: { "tnum": 1 }
