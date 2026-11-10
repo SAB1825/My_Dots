@@ -13,6 +13,23 @@ Scope {
 
     property var panels: ({})
     property bool shown: true
+    property int applicationRadius: 23
+
+    Process {
+        running: true
+        command: ["hyprctl", "getoption", "decoration:rounding", "-j"]
+        stdout: StdioCollector {
+            onStreamFinished: {
+                try {
+                    const option = JSON.parse(text);
+                    if (typeof option.int === "number")
+                        root.applicationRadius = Math.max(0, option.int);
+                } catch (error) {
+                    console.warn("Could not read application corner radius:", error);
+                }
+            }
+        }
+    }
 
     // Clear the frosted-bar rule when restoring the grouped design.
     Process {
@@ -111,7 +128,7 @@ Scope {
 
             readonly property string barStyle: BarConfig.s("barStyle", win.screenName)
             readonly property bool solidZones: barStyle === "solid"
-            readonly property bool monoline: barStyle === "bar"
+            readonly property bool monoline: false
             readonly property bool pills: BarConfig.s("distinctPills", win.screenName)
 
             component Island: Item {
@@ -143,9 +160,7 @@ Scope {
                 Component.onDestruction: island.blobSync()
 
                 property real radius: BarConfig.s("radius", win.screenName)
-                property color color: Colors.alpha(
-                    Colors.bg,
-                    (hovered ? BarConfig.s("fillHover", win.screenName) : BarConfig.s("fill", win.screenName)) / 100)
+                property color color: "#000000"
                 property color borderColor: hovered
                     ? Colors.alpha(Colors.accent, 0.55)
                     : Colors.alpha(Colors.outline, BarConfig.s("borderAlpha", win.screenName) / 100)
@@ -169,8 +184,7 @@ Scope {
                 Rectangle {
                     id: plate
                     anchors.fill: parent
-                    visible: win.monoline ? win.pills
-                                          : (!island.blobbed || win.pills)
+                    visible: false
                     radius: island.radius
                     color: island.color
                     antialiasing: true
@@ -407,25 +421,65 @@ Scope {
                 panels: root.panels
             }
 
-            component ZoneBlobs: Blobs {
+            component ZoneBlobs: Rectangle {
+                required property Item host
+                property bool atLeftEdge: false
+                property bool atRightEdge: false
                 z: -1
-                visible: BarConfig.s("blob", win.screenName) && count > 0 && !win.monoline
+                readonly property int horizontalPadding: 14
+                x: host.x - horizontalPadding
+                y: 0
+                width: host.width + horizontalPadding * 2
+                height: field.height
+                visible: host.width > 0
+                // Modest capsule rounding; edge cutouts follow the live window radius.
+                radius: 10
+                color: "#000000"
+                antialiasing: true
 
-                fuse: win.solidZones
-                    ? BarConfig.s("islandGap", win.screenName) * 0.9 + 4
-                    : BarConfig.s("blobFuse", win.screenName)
-                corner: BarConfig.s("radius", win.screenName)
+                Rectangle {
+                    anchors.top: parent.top
+                    width: parent.width
+                    height: parent.radius
+                    color: "#000000"
+                }
 
-                fillColor: Colors.bg
-                fillAlpha: BarConfig.s("fill", win.screenName) / 100
-                hoverColor: Colors.bg
-                hoverAlpha: BarConfig.s("fillHover", win.screenName) / 100
-                strokeColor: Colors.outline
-                strokeAlpha: BarConfig.s("border", win.screenName)
-                    ? BarConfig.s("borderAlpha", win.screenName) / 100 : 0
-                stroke: BarConfig.s("border", win.screenName) ? 1.5 : 0
+                // At screen edges, wrap around the application's top corners.
+                Rectangle {
+                    visible: parent.atLeftEdge || parent.atRightEdge
+                    anchors.bottom: parent.bottom
+                    x: parent.atRightEdge ? parent.width - width : 0
+                    width: parent.radius
+                    height: parent.radius
+                    color: "#000000"
+                }
 
-                shadow: BarConfig.s("shadow", win.screenName)
+                Canvas {
+                    visible: parent.atLeftEdge || parent.atRightEdge
+                    x: parent.atRightEdge ? parent.width - width : 0
+                    y: parent.height
+                    width: root.applicationRadius
+                    height: root.applicationRadius
+                    property bool mirrored: parent.atRightEdge
+                    onMirroredChanged: requestPaint()
+                    onWidthChanged: requestPaint()
+                    onHeightChanged: requestPaint()
+                    onPaint: {
+                        const ctx = getContext("2d");
+                        ctx.reset();
+                        if (mirrored) {
+                            ctx.translate(width, 0);
+                            ctx.scale(-1, 1);
+                        }
+                        ctx.fillStyle = "#000000";
+                        ctx.beginPath();
+                        ctx.moveTo(0, 0);
+                        ctx.lineTo(width, 0);
+                        ctx.arc(width, height, width, -Math.PI / 2, -Math.PI, true);
+                        ctx.closePath();
+                        ctx.fill();
+                    }
+                }
             }
 
             component GlideTransition: Transition {
@@ -547,7 +601,7 @@ Scope {
                     Row {
                         id: leftZone
                         anchors.left: parent.left
-                        anchors.leftMargin: BarConfig.s("edgeMargin", win.screenName)
+                        anchors.leftMargin: leftCapsule.horizontalPadding
                         anchors.verticalCenter: parent.verticalCenter
                         spacing: BarConfig.s("islandGap", win.screenName)
 
@@ -562,15 +616,15 @@ Scope {
                                 required property int index
                                 isle: modelData
                                 position: index
-                                blobField: leftBlob
                                 anchors.verticalCenter: parent.verticalCenter
                             }
                         }
                     }
 
                     ZoneBlobs {
-                        id: leftBlob
+                        id: leftCapsule
                         host: leftZone
+                        atLeftEdge: true
                     }
 
                     Row {
@@ -590,21 +644,20 @@ Scope {
                                 required property int index
                                 isle: modelData
                                 position: index + 2
-                                blobField: centerBlob
                                 anchors.verticalCenter: parent.verticalCenter
                             }
                         }
                     }
 
                     ZoneBlobs {
-                        id: centerBlob
+                        id: centerCapsule
                         host: centerZone
                     }
 
                     Row {
                         id: rightZone
                         anchors.right: parent.right
-                        anchors.rightMargin: BarConfig.s("edgeMargin", win.screenName)
+                        anchors.rightMargin: rightCapsule.horizontalPadding
                         anchors.verticalCenter: parent.verticalCenter
                         spacing: BarConfig.s("islandGap", win.screenName)
 
@@ -619,15 +672,15 @@ Scope {
                                 required property int index
                                 isle: modelData
                                 position: index + 3
-                                blobField: rightBlob
                                 anchors.verticalCenter: parent.verticalCenter
                             }
                         }
                     }
 
                     ZoneBlobs {
-                        id: rightBlob
+                        id: rightCapsule
                         host: rightZone
+                        atRightEdge: true
                     }
                 }
             }

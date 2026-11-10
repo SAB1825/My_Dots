@@ -20,9 +20,9 @@ Singleton {
         adapter.weatherEnabled === undefined ? true : adapter.weatherEnabled
     readonly property int weatherEveryMin:
         adapter.weatherEveryMin === undefined ? 60 : adapter.weatherEveryMin
-    readonly property string barPosition: adapter.barPosition
+    readonly property string barPosition: "top"
     readonly property string osdStyle: adapter.osdStyle
-    readonly property bool barAtTop: adapter.barPosition !== "bottom"
+    readonly property bool barAtTop: root.barPosition === "top"
 
     readonly property real uiScale: adapter.uiScale === undefined ? 1.0 : adapter.uiScale
     readonly property var monitorScales: adapter.monitorScales

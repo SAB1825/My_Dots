@@ -175,15 +175,15 @@ Singleton {
     }
 
     readonly property var styleSpec: ({
-        barHeight:     { type: "int", def: 34,  min: 20, max: 80 },
-        islandHeight:  { type: "int", def: 26,  min: 14, max: 72 },
-        edgeMargin:    { type: "int", def: 8,   min: 0,  max: 80 },
-        islandGap:     { type: "int", def: 8,   min: 0,  max: 60 },
-        itemSpacing:   { type: "int", def: 8,   min: 0,  max: 40 },
-        islandPadding: { type: "int", def: 10,  min: 0,  max: 40 },
+        barHeight:     { type: "int", def: 32,  min: 20, max: 80 },
+        islandHeight:  { type: "int", def: 32,  min: 14, max: 72 },
+        edgeMargin:    { type: "int", def: 26,   min: 0,  max: 80 },
+        islandGap:     { type: "int", def: 12,   min: 0,  max: 60 },
+        itemSpacing:   { type: "int", def: 12,   min: 0,  max: 40 },
+        islandPadding: { type: "int", def: 0,  min: 0,  max: 40 },
         radius:        { type: "int", def: 12,  min: 0,  max: 40 },
         fontSize:      { type: "int", def: 13,  min: 7,  max: 22 },
-        glyphSize:     { type: "int", def: 14,  min: 7,  max: 26 },
+        glyphSize:     { type: "int", def: 16,  min: 7,  max: 26 },
         fill:          { type: "int", def: 80,  min: 0,  max: 100 },
         fillHover:     { type: "int", def: 92,  min: 0,  max: 100 },
         borderAlpha:   { type: "int", def: 32,  min: 0,  max: 100 },
@@ -532,7 +532,7 @@ Singleton {
 
     function writeNow() {
         flush.stop();
-        store.panelBarVersion = 4;
+        store.panelBarVersion = 6;
         store.perScreen = root.perScreen;
         store.cfgs = root.cfgs;
         file.writeAdapter();
@@ -658,6 +658,22 @@ Singleton {
                             for (const item of island.items)
                                 if (item.type === "clock")
                                     item.opts.format = "ddd, d MMM HH:mm";
+                root.cfgs = out;
+                root.save();
+            }
+            if (store.panelBarVersion < 5) {
+                // Apply consistent spacing to existing saved capsule layouts.
+                for (const name in out)
+                    for (const key of ["barHeight", "islandHeight", "edgeMargin",
+                                       "islandGap", "itemSpacing", "islandPadding", "glyphSize"])
+                        out[name].style[key] = root.styleSpec[key].def;
+                root.cfgs = out;
+                root.save();
+            }
+            if (store.panelBarVersion < 6) {
+                for (const name in out)
+                    for (const key of ["barHeight", "islandHeight"])
+                        out[name].style[key] = root.styleSpec[key].def;
                 root.cfgs = out;
                 root.save();
             }
