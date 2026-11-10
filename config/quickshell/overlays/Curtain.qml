@@ -17,8 +17,7 @@ Scope {
         if (root.showing)
             return;
         root.showing = true;
-        faceTex.scheduleUpdate();
-        absorb.restart();
+        reveal.restart();
     }
 
     IpcHandler {
@@ -38,13 +37,12 @@ Scope {
     property real k: 0
 
     SequentialAnimation {
-        id: absorb
+        id: reveal
         ScriptAction { script: root.k = 0 }
-        PauseAnimation { duration: 60 }
         NumberAnimation {
             target: root; property: "k"
-            from: 0; to: 1; duration: 1500
-            easing.type: Easing.Linear
+            from: 0; to: 1; duration: 360
+            easing.type: Easing.InOutSine
         }
         ScriptAction {
             script: {
@@ -70,42 +68,10 @@ Scope {
         color: "transparent"
         mask: Region {}
 
-        readonly property real tw: IslandConfig.s("pillMin")
-        readonly property real th: IslandConfig.s("pillHeight")
-        readonly property real tcx: win.width / 2 + IslandConfig.s("offsetX")
-        readonly property real tcy: IslandConfig.s("inBar")
-            ? BarConfig.s("barHeight", win.screen ? win.screen.name : "") / 2
-            : IslandConfig.s("offsetY") + win.th / 2
-
-        Item {
-            id: faceBox
+        LockFace {
             anchors.fill: parent
-
-            LockFace {
-                anchors.fill: parent
-                live: root.armed || root.showing || root.peek
-            }
-        }
-
-        ShaderEffectSource {
-            id: faceTex
-            sourceItem: faceBox
-            hideSource: true
-            live: root.peek
-            visible: false
-        }
-
-        ShaderEffect {
-            anchors.fill: parent
-            fragmentShader: "root:/design/shaders/melt.frag.qsb"
-            blending: true
-
-            property var source: faceTex
-            property real progress: root.k
-            property vector2d sink: Qt.vector2d(win.tcx / Math.max(1, win.width),
-                                                (win.tcy + win.th * 0.25) / Math.max(1, win.height))
-            property real aspect: win.width / Math.max(1, win.height)
-            property color rimColor: Colors.accent
+            live: root.armed || root.showing || root.peek
+            opacity: 1 - root.k
         }
     }
 }

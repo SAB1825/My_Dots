@@ -27,6 +27,9 @@ Item {
         anchors.fill: parent
         readonly property var screen: view.screen
 
+        property real exitProgress: 0
+        opacity: 1 - surface.exitProgress
+
         property string entry: ""
         property string notice: ""
         property bool failed: false
@@ -103,7 +106,7 @@ Item {
         function submit() {
             if (view.preview)
                 return;
-            if (surface.entry === "" || pam.active)
+            if (surface.entry === "" || pam.active || okRun.running)
                 return;
             surface.notice = I18n.t("state.checking");
             surface.failed = false;
@@ -260,16 +263,21 @@ Item {
             id: gate
             anchors.fill: parent
 
-            readonly property real barH: BarConfig.s("barHeight", surface.screen ? surface.screen.name : "")
-            readonly property real pillH: IslandConfig.s("pillHeight")
-            readonly property real topCy: gate.barH / 2
             readonly property real fieldCy: gate.height * 0.64
-            readonly property real isleW: 116
             readonly property real fieldW: 360
             readonly property real fieldH: 62
 
             property bool awake: false
+            property real reveal: gate.awake ? 1 : 0
+            Behavior on reveal {
+                NumberAnimation { duration: 220; easing.type: Easing.OutCubic }
+            }
+            property real dismiss: 0
+            opacity: gate.reveal * (1 - gate.dismiss)
+            transform: Translate { y: -18 * gate.dismiss }
+
             function poke() {
+                if (okRun.running) return;
                 gate.awake = true;
                 doze.restart();
             }
@@ -284,27 +292,16 @@ Item {
                 }
             }
             Connections {
-                target: root
+                target: view.host
                 function onLockedChanged() {
                     if (view.host.locked) {
                         gate.awake = false;
-                        gate.snap = 0;
-                        gate.merge = 0;
                         gate.burst = 0;
+                        gate.dismiss = 0;
+                        surface.exitProgress = 0;
                     }
                 }
             }
-
-            MorphSpring {
-                id: wake
-                response: 0.62
-                damping: 0.88
-                closeMs: 520
-                softClose: true
-                target: gate.awake ? 1 : 0
-            }
-            readonly property real w: Math.max(0, wake.value)
-            readonly property real grow: Math.max(0, Math.min(1, (gate.w - 0.25) / 0.6))
 
             property real sway: 0
             SequentialAnimation {
@@ -316,78 +313,10 @@ Item {
                 NumberAnimation { target: gate; property: "sway"; to: 0;   duration: 130; easing.type: Easing.InOutSine }
             }
 
-            readonly property real bw: Motion.mix(gate.isleW, gate.fieldW, gate.grow) * (1 - 0.18 * Math.sin(Math.PI * gate.w) * (1 - gate.grow))
-            readonly property real bh: Motion.mix(gate.pillH, gate.fieldH, gate.grow) * (1 + 0.25 * Math.sin(Math.PI * Math.min(1, gate.w)) * (1 - gate.grow))
+            readonly property real bw: gate.fieldW
+            readonly property real bh: gate.fieldH
             readonly property real bcx: gate.width / 2 + gate.sway
-            readonly property real bcy: Motion.mix(gate.topCy, gate.fieldCy, gate.w)
-
-            readonly property real ay: gate.topCy + gate.pillH / 2 - 6
-            readonly property real by: gate.bcy - gate.bh / 2 + 8
-            readonly property real gap: gate.by - gate.ay
-            property real snap: 0
-            NumberAnimation { id: breakRun; target: gate; property: "snap"; to: 1; duration: 360; easing.type: Easing.OutCubic }
-            NumberAnimation { id: mendRun; target: gate; property: "snap"; to: 0; duration: 320; easing.type: Easing.OutCubic }
-            onWChanged: {
-                if (gate.awake && (gate.w > 0.9 || gate.gap > 190) && gate.snap < 1 && !breakRun.running) {
-                    mendRun.stop();
-                    breakRun.restart();
-                } else if (!gate.awake && gate.snap > 0 && !mendRun.running && gate.w < 0.6) {
-                    breakRun.stop();
-                    mendRun.restart();
-                }
-            }
-            function neckW(s) {
-                const th = Math.max(0, Math.min(1, 1 - gate.gap / 260));
-                const base = Motion.mix(16, 30, s * s);
-                const pinch = 1 - (1 - Math.pow(th, 0.7)) * 0.88 * Math.sin(Math.PI * s);
-                const mid = 1 - Math.abs(2 * s - 1);
-                const cut = Math.max(0, Math.min(1, 1 - gate.snap * (1 + 2 * mid)));
-                return base * pinch * cut;
-            }
-
-            Item {
-                id: gooHost
-                anchors.fill: parent
-
-                Item {
-                    property bool isBlob: true
-                    width: gate.isleW
-                    height: gate.pillH
-                    x: gate.width / 2 - width / 2
-                    y: gate.topCy - height / 2
-                }
-                Item {
-                    property bool isBlob: true
-                    width: gate.bw
-                    height: gate.bh
-                    x: gate.bcx - width / 2
-                    y: gate.bcy - height / 2
-                    onXChanged: lockGoo.applySync()
-                    onYChanged: lockGoo.applySync()
-                    onWidthChanged: lockGoo.applySync()
-                    onHeightChanged: lockGoo.applySync()
-                }
-                Repeater {
-                    model: 7
-                    Item {
-                        id: bead
-                        required property int index
-                        property bool isBlob: true
-                        readonly property real s0: (bead.index + 0.5) / 7
-                        readonly property real u: bead.s0 < 0.5 ? bead.s0 * (1 - gate.snap) : bead.s0 + (1 - bead.s0) * gate.snap
-                        readonly property real bw: gate.gap > 4 ? gate.neckW(bead.s0) : 0
-                        visible: bead.bw > 1.5
-                        width: Math.max(0.1, bead.bw)
-                        height: Math.max(bead.bw, gate.gap / 7 * 1.6)
-                        x: gate.width / 2 + gate.sway * bead.u - width / 2
-                        y: Motion.mix(gate.ay, gate.by, bead.u) - height / 2
-                        onXChanged: lockGoo.applySync()
-                        onYChanged: lockGoo.applySync()
-                        onWidthChanged: lockGoo.applySync()
-                        onVisibleChanged: lockGoo.applySync()
-                    }
-                }
-            }
+            readonly property real bcy: gate.fieldCy
 
             property real breath: 0
             SequentialAnimation on breath {
@@ -406,34 +335,19 @@ Item {
                 blur: 40 + 20 * gate.breath
                 spread: 2 * gate.breath
                 color: Colors.alpha(surface.failed ? Colors.bad : Colors.accent,
-                                    (0.35 + 0.3 * gate.breath) * gate.grow)
+                                    0.35 + 0.3 * gate.breath)
                 Behavior on color { ColorAnimation { duration: 500 } }
             }
 
-            Blobs {
-                id: lockGoo
-                host: gooHost
-                fuse: 24
-                corner: 40
-                stroke: 1
-                shadow: false
-                fillColor: "black"
-                fillAlpha: 0.92
-                hoverColor: "black"
-                hoverAlpha: 0.92
-                strokeColor: surface.failed ? Colors.bad : "white"
-                strokeAlpha: surface.failed ? 0.7 : 0.10 + 0.12 * gate.grow
-            }
-            Timer { interval: 80; running: true; onTriggered: lockGoo.applySync() }
-
-            Text {
-                anchors.horizontalCenter: parent.horizontalCenter
-                y: gate.topCy - height / 2
-                text: "󰌾"
-                color: Qt.rgba(1, 1, 1, 0.8)
-                font.family: Fonts.glyph
-                font.pixelSize: 15
-                opacity: 1 - gate.grow * 0.4
+            Rectangle {
+                x: gate.bcx - width / 2
+                y: gate.bcy - height / 2
+                width: gate.fieldW
+                height: gate.fieldH
+                radius: 18
+                color: Qt.rgba(0, 0, 0, 0.85)
+                border.width: 1
+                border.color: surface.failed ? Colors.bad : Qt.rgba(1, 1, 1, 0.18)
             }
 
             Item {
@@ -442,7 +356,7 @@ Item {
                 y: gate.bcy - gate.fieldH / 2
                 width: gate.fieldW
                 height: gate.fieldH
-                opacity: Math.max(0, Math.min(1, (gate.w - 0.7) / 0.3))
+                opacity: 1
                 visible: opacity > 0.01
 
                 ClippingRectangle {
@@ -455,7 +369,7 @@ Item {
                     color: Qt.rgba(1, 1, 1, 0.08)
                     Image {
                         anchors.fill: parent
-                        source: "file://" + Quickshell.env("HOME") + "/.local/share/avatar/avatar.png"
+                        source: "file://" + Quickshell.env("HOME") + "/Pictures/Logos/gojo.jpeg"
                         fillMode: Image.PreserveAspectCrop
                         asynchronous: true
                     }
@@ -470,7 +384,7 @@ Item {
                     font.family: Fonts.display
                     font.features: { "tnum": 1 }
                     font.pixelSize: 14
-                    opacity: surface.entry.length === 0 && !pam.active && gate.merge === 0 ? 1 : 0
+                    opacity: surface.entry.length === 0 && !pam.active && !okRun.running ? 1 : 0
                     Behavior on opacity { NumberAnimation { duration: 260 } }
                 }
 
@@ -525,10 +439,8 @@ Item {
                                 duration: 360; easing.type: Easing.OutBack; easing.overshoot: 1.2
                             }
                             readonly property real size: 10 * dot.born * (1 - gate.burst)
-                                * (1 + 0.7 * gate.merge)
-                            property real cx: Motion.mix(beadRow.x0 + dot.index * beadRow.step,
-                                                                  beadRow.width / 2, gate.merge)
-                            Behavior on cx { enabled: gate.merge === 0; NumberAnimation { duration: 260; easing.type: Easing.OutCubic } }
+                            property real cx: beadRow.x0 + dot.index * beadRow.step
+                            Behavior on cx { enabled: !okRun.running; NumberAnimation { duration: 260; easing.type: Easing.OutCubic } }
                             width: Math.max(0.1, dot.size)
                             height: Math.max(0.1, dot.size)
                             x: dot.cx - width / 2
@@ -547,7 +459,7 @@ Item {
                     corner: 6
                     stroke: 0
                     shadow: false
-                    fillColor: surface.failed ? Colors.bad : gate.merge > 0 ? Colors.good : "white"
+                    fillColor: surface.failed ? Colors.bad : "white"
                     fillAlpha: 0.95
                     hoverColor: "white"
                     hoverAlpha: 0.95
@@ -605,7 +517,6 @@ Item {
             }
 
             property real burst: 0
-            property real merge: 0
 
             SequentialAnimation {
                 id: failRun
@@ -622,10 +533,24 @@ Item {
 
             SequentialAnimation {
                 id: okRun
-                NumberAnimation { target: gate; property: "merge"; to: 1; duration: 340; easing.type: Easing.InOutCubic }
-                PauseAnimation { duration: 120 }
                 ScriptAction {
                     script: {
+                        doze.stop();
+                        failRun.stop();
+                        shake.stop();
+                        gate.sway = 0;
+                    }
+                }
+                ParallelAnimation {
+                    NumberAnimation { target: gate; property: "dismiss"; to: 1; duration: 280; easing.type: Easing.OutCubic }
+                    SequentialAnimation {
+                        PauseAnimation { duration: 100 }
+                        NumberAnimation { target: surface; property: "exitProgress"; to: 1; duration: 320; easing.type: Easing.InOutSine }
+                    }
+                }
+                ScriptAction {
+                    script: {
+                        unlockGuard.stop();
                         view.host.unlocked();
                         view.host.locked = false;
                     }
@@ -650,7 +575,7 @@ Item {
                 x: -10000
                 width: 10
                 focus: true
-                enabled: !pam.active
+                enabled: !pam.active && !okRun.running
                 echoMode: TextInput.NoEcho
                 property bool capsOn: false
                 onTextChanged: {
