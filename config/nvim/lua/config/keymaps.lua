@@ -1,5 +1,10 @@
 vim.g.mapleader = " "
 
+vim.keymap.set("n", "<C-h>", "<C-w>h", { desc = "Move to left window" })
+vim.keymap.set("n", "<C-j>", "<C-w>j", { desc = "Move to window below" })
+vim.keymap.set("n", "<C-k>", "<C-w>k", { desc = "Move to window above" })
+vim.keymap.set("n", "<C-l>", "<C-w>l", { desc = "Move to right window" })
+
 vim.keymap.set("x", "p", [["_dP]], { desc = "Paste over selection without losing yanked text" })
 
 vim.keymap.set({ "n", "v" }, "<leader>d", [["_d]], { desc = "Delete without yanking" })
