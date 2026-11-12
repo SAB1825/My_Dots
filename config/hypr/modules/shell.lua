@@ -11,6 +11,9 @@ shell("SUPER + T", "timer")
 shell("SUPER + SHIFT + D", "calendar")
 shell("SUPER + SHIFT + M", "audioPanel")
 shell("SUPER + SHIFT + N", "notifCenter")
+shell("SUPER + E", "files")
+shell("SUPER + CTRL + P", "procs")
+shell("SUPER + CTRL + E", "eq")
 
 local mod = require("modules.variables").mainMod
 shell(mod .. " + SHIFT + B", "barToggle")

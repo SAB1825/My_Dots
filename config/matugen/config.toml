@@ -8,16 +8,16 @@ output_path = "~/.config/session/theme-sync/Wallpaper.colors"
 post_hook = 'python3 "$HOME/.config/session/theme-sync/reload-kde.py"'
 
 [templates.quickshell]
-input_path = "~/.config/quickshell/config/matugen/templates/quickshell-colors.json"
+input_path = "~/.config/matugen/templates/quickshell-colors.json"
 output_path = "~/.cache/matugen/colors.json"
 
 [templates.hyprlock]
-input_path = "~/.config/quickshell/config/matugen/templates/hyprlock-colors.conf"
+input_path = "~/.config/matugen/templates/hyprlock-colors.conf"
 output_path = "~/.config/hypr/config/lock-colors.conf"
 
 [templates.kitty]
-input_path = "~/.config/quickshell/config/matugen/templates/kitty-colors.conf"
-output_path = "~/.config/quickshell/generated/kitty-colors.conf"
+input_path = "~/.config/matugen/templates/kitty-colors.conf"
+output_path = "~/.config/kitty/colors.conf"
 post_hook = 'pkill -USR1 -u "$(id -u)" -x kitty || true'
 
 [templates.gtk]

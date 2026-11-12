@@ -47,7 +47,7 @@ wallpaper=""
 if [[ -n "$wallpaper" && -f "$wallpaper" ]]; then
     if [[ ! -f "$COLORS" || "$wallpaper" -nt "$COLORS" ]] \
         || ! grep -qxF "\$wallpaper = $wallpaper" "$COLORS" 2>/dev/null; then
-        matugen image "$wallpaper" --mode dark --type scheme-content --prefer saturation >/dev/null 2>&1
+        matugen --config "$HOME/.config/matugen/config.toml" image "$wallpaper" --mode dark --type scheme-content --prefer saturation >/dev/null 2>&1
     fi
 fi
 

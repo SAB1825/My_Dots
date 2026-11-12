@@ -68,5 +68,5 @@ fi
 echo "$WALLPAPER" > "$HOME/.config/hypr/current-wallpaper"
 
 if [[ "$NO_THEME" != "--no-theme" ]]; then
-    matugen --config "$HOME/.config/quickshell/matugen-shell.toml" image "$WALLPAPER" --mode dark --type scheme-content --prefer saturation >/dev/null 2>&1 &
+    matugen --config "$HOME/.config/matugen/config.toml" image "$WALLPAPER" --mode dark --type scheme-content --prefer saturation >/dev/null 2>&1 &
 fi

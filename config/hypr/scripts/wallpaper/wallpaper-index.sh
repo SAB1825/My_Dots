@@ -26,7 +26,7 @@ while IFS= read -r wp; do
     [ -n "$hex" ] || continue
 
     printf '%s\t%s\n' "$name" "${hex:0:7}" >> "$tmp"
-done < <(find "$DIR" -maxdepth 1 -type f \
+done < <(find -H "$DIR" -maxdepth 1 -type f \
              \( -iname '*.jpg' -o -iname '*.jpeg' -o -iname '*.png' -o -iname '*.webp' \) | sort)
 
 mv "$tmp" "$INDEX"
