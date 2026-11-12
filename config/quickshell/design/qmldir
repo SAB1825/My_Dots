@@ -15,3 +15,4 @@ Emerge Emerge.qml
 singleton Emergence Emergence.qml
 IsleDrip IsleDrip.qml
 Water Water.qml
+PanelBackground PanelBackground.qml

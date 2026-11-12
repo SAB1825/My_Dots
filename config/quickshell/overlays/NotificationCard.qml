@@ -6,7 +6,7 @@ import "root:/design"
 import "root:/reusables"
 import "root:/services"
 
-Rectangle {
+PanelBackground {
     id: card
 
     required property var modelData
@@ -57,11 +57,7 @@ Rectangle {
         }
     }
 
-    color: card.critical
-        ? Qt.rgba(Colors.bad.r * 0.28 + Colors.bg.r * 0.72,
-                  Colors.bad.g * 0.28 + Colors.bg.g * 0.72,
-                  Colors.bad.b * 0.28 + Colors.bg.b * 0.72, 0.96)
-        : Colors.alpha(Colors.bg, 0.95)
+    glow: card.edge
 
     border.width: 1
     border.color: card.critical
@@ -70,30 +66,6 @@ Rectangle {
                   card.hovering ? 0.42 : 0.26)
 
     Behavior on border.color { ColorAnimation { duration: Motion.base } }
-
-    Sheen {
-        anchors.fill: parent
-        radius: card.radius
-        border: false
-        grainOpacity: 0.025
-    }
-
-    ClippingRectangle {
-        anchors.fill: parent
-        radius: card.radius
-        color: "transparent"
-
-        Rectangle {
-            width: parent.width * 0.55
-            height: parent.height
-            opacity: card.critical ? 0.20 : 0.16
-            gradient: Gradient {
-                orientation: Gradient.Horizontal
-                GradientStop { position: 0.0; color: card.edge }
-                GradientStop { position: 1.0; color: "transparent" }
-            }
-        }
-    }
 
     opacity: 0
     transform: Translate { id: slide; x: 380 }

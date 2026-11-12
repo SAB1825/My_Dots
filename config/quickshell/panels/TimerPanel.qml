@@ -120,15 +120,14 @@ Scope {
             cache: false
         }
 
-        Glass {
+        PanelBackground {
             id: card
 
             anchors.centerIn: parent
             width: 850
             height: 600
             radius: Shape.modal
-            elevation: 3
-            edge: Timers.anyRinging ? Colors.bad : Colors.accent
+            glow: Timers.anyRinging ? Colors.bad : Colors.accent
 
             opacity: emerge.on ? emerge.cardOpacity : (root.shown ? 1 : 0)
             scale: emerge.on ? 1 : (root.shown ? 1 : 0.95)

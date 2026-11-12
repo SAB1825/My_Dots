@@ -616,14 +616,11 @@ Scope {
 
             Bloom { target: card }
 
-            Glass {
+            PanelBackground {
                 z: -1
                 anchors.fill: parent
                 radius: Prefs.apple ? 30 : Shape.modal
-                elevation: 3
-                tint: Colors.bg
-                tintOpacity: 0.90
-                edge: Colors.accent
+                glow: Colors.accent
             }
 
             Column {

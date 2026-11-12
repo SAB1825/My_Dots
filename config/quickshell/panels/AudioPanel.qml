@@ -281,30 +281,14 @@ Scope {
                 }
             }
 
-            Rectangle {
+            PanelBackground {
                 id: card
                 width: 640
                 height: header.height + stage.height + caption.height
                         + control.height + footer.height + 62
                 radius: Shape.modal
 
-                gradient: Gradient {
-                    GradientStop { position: 0.0
-                        color: Qt.rgba(Colors.bgAlt.r, Colors.bgAlt.g, Colors.bgAlt.b, 0.96) }
-                    GradientStop { position: 0.5
-                        color: Qt.rgba(Colors.bg.r, Colors.bg.g, Colors.bg.b, 0.985) }
-                    GradientStop { position: 1.0
-                        color: Qt.rgba(Colors.bg.r, Colors.bg.g, Colors.bg.b, 0.99) }
-                }
-
                 border.width: 0
-
-                Sheen {
-                    anchors.fill: parent
-                    radius: Shape.modal
-                    edge: Colors.accent
-                    edgeOpacity: 0.26
-                }
 
                 Behavior on height {
                     NumberAnimation {

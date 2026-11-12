@@ -177,11 +177,9 @@ Scope {
             height: column.implicitHeight + 72
             focus: true
 
-            Glass {
+            PanelBackground {
                 anchors.fill: parent
                 radius: Shape.modal
-                elevation: 3
-                tintOpacity: 0.74
             }
 
             opacity: emerge.on ? emerge.cardOpacity : (root.shown ? 1 : 0)

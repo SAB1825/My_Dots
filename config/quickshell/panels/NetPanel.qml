@@ -278,29 +278,14 @@ Scope {
                 }
             }
 
-            Rectangle {
+            PanelBackground {
                 id: card
+                glow: root.tint
                 width: 640
                 height: header.height + stage.height + caption.height + footer.height + 56
                 radius: Shape.modal
 
-                gradient: Gradient {
-                    GradientStop { position: 0.0
-                        color: Qt.rgba(Colors.bgAlt.r, Colors.bgAlt.g, Colors.bgAlt.b, 0.96) }
-                    GradientStop { position: 0.5
-                        color: Qt.rgba(Colors.bg.r, Colors.bg.g, Colors.bg.b, 0.985) }
-                    GradientStop { position: 1.0
-                        color: Qt.rgba(Colors.bg.r, Colors.bg.g, Colors.bg.b, 0.99) }
-                }
-
                 border.width: 0
-
-                Sheen {
-                    anchors.fill: parent
-                    radius: Shape.modal
-                    edge: root.tint
-                    edgeOpacity: 0.26
-                }
 
                 Behavior on height {
                     NumberAnimation {
@@ -320,40 +305,6 @@ Scope {
                         root.tab = root.wifiTab ? "bt" : "wifi";
                         event.accepted = true;
                     }
-                }
-
-                Canvas {
-                    id: glow
-                    width: 520
-                    height: 520
-                    x: card.width / 2 - width / 2
-                    y: header.height + stage.height / 2 - height / 2 + 10
-                    opacity: root.radioOn ? 1 : 0.35
-                    visible: root.graphMode
-                    Behavior on opacity { NumberAnimation { duration: 300 } }
-
-                    Connections {
-                        target: root
-                        function onTintChanged() { glow.requestPaint(); }
-                    }
-
-                    onPaint: {
-                        const ctx = getContext("2d");
-                        ctx.reset();
-                        const r = width / 2;
-                        const g = ctx.createRadialGradient(r, r, r * 0.05, r, r, r);
-                        g.addColorStop(0.0, Qt.rgba(root.tint.r, root.tint.g, root.tint.b, 0.20));
-                        g.addColorStop(0.45, Qt.rgba(root.tint.r, root.tint.g, root.tint.b, 0.09));
-                        g.addColorStop(1.0, Qt.rgba(root.tint.r, root.tint.g, root.tint.b, 0.0));
-                        ctx.fillStyle = g;
-                        ctx.beginPath();
-                        ctx.arc(r, r, r, 0, Math.PI * 2);
-                        ctx.fill();
-                    }
-
-                    scale: 0.92 + Phase.wave(8.4) * 0.14
-
-                    PhaseHold { active: root.shown && root.graphMode }
                 }
 
                 Item {

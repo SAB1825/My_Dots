@@ -179,24 +179,11 @@ Scope {
                 }
             }
 
-            Rectangle {
+            PanelBackground {
                 id: card
                 anchors.fill: parent
                 radius: Shape.card
                 clip: true
-
-                gradient: Gradient {
-                    GradientStop { position: 0.0; color: root.alpha(Colors.bgAlt, 0.96) }
-                    GradientStop { position: 0.5; color: root.alpha(Colors.bg, 0.985) }
-                    GradientStop { position: 1.0; color: root.alpha(Colors.bg, 0.99) }
-                }
-
-                Sheen {
-                    anchors.fill: parent
-                    radius: Shape.card
-                    edge: Colors.accent
-                    edgeOpacity: 0.26
-                }
 
                 Item {
                     id: header

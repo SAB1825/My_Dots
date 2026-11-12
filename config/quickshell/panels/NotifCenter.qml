@@ -152,52 +152,12 @@ Scope {
                 }
             }
 
-            Rectangle {
+            PanelBackground {
                 id: card
+                glow: root.tint
                 anchors.fill: parent
                 radius: Shape.card
                 clip: true
-
-                gradient: Gradient {
-                    GradientStop { position: 0.0
-                        color: root.alpha(Colors.bgAlt, 0.96) }
-                    GradientStop { position: 0.45
-                        color: root.alpha(Colors.bg, 0.985) }
-                    GradientStop { position: 1.0
-                        color: root.alpha(Colors.bg, 0.99) }
-                }
-
-                Canvas {
-                    id: wash
-                    width: 520
-                    height: 520
-                    x: card.width / 2 - width / 2
-                    y: -260
-
-                    Connections {
-                        target: root
-                        function onTintChanged() { wash.requestPaint(); }
-                    }
-
-                    onPaint: {
-                        const ctx = getContext("2d");
-                        ctx.reset();
-                        const r = width / 2;
-                        const g = ctx.createRadialGradient(r, r, r * 0.05, r, r, r);
-                        g.addColorStop(0.0, root.alpha(root.tint, 0.22));
-                        g.addColorStop(0.5, root.alpha(root.tint, 0.07));
-                        g.addColorStop(1.0, root.alpha(root.tint, 0.0));
-                        ctx.fillStyle = g;
-                        ctx.fillRect(0, 0, width, height);
-                    }
-                }
-
-                Sheen {
-                    anchors.fill: parent
-                    radius: Shape.card
-                    edge: root.tint
-                    edgeOpacity: 0.26
-                }
 
                 Item {
                     id: header
