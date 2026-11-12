@@ -1,16 +1,36 @@
-# Sabari’s dotfiles
+<h1 align="center">Sabari’s dotfiles</h1>
 
-My Arch Linux setup with Hyprland and Quickshell.
+<p align="center">Arch Linux · Hyprland · Quickshell</p>
 
-## What's included
+<p align="center">
+  <a href="https://youtu.be/_7CwLcyudi0">
+    <img src="https://img.youtube.com/vi/_7CwLcyudi0/hqdefault.jpg" alt="Watch the desktop showcase on YouTube" width="720">
+  </a>
+</p>
 
-- **Hyprland** — window management, keybindings, and display settings.
-- **Quickshell** — bar, app launcher, wallpaper picker, Bluetooth controls, calendar, and timer.
-- **Kitty, Neovim, Zsh, and Fastfetch** — terminal, editor, shell, and system info configs.
-- **Packages** — official and AUR package lists in [`packages/`](packages/).
-- **Wallpapers** — images in [`wallpapers/`](wallpapers/), linked from `~/Pictures/Wallpapers`.
-- **btop, Cava, GTK, PipeWire, and Rishot** — application preferences and audio configuration.
-- **Desktop integration** — Brave flags, default applications, Code OSS font settings, and wallpaper theme templates/helpers.
+<p align="center"><a href="https://youtu.be/_7CwLcyudi0">▶ Watch the showcase</a></p>
+
+## The setup
+
+| Component | Tools |
+| --- | --- |
+| Desktop | Hyprland, Quickshell |
+| Terminal & shell | Kitty, Zsh |
+| Editor | Neovim, Code OSS |
+| System tools | Fastfetch, btop, Cava |
+| Theming | GTK, Matugen |
+
+Quickshell brings together the bar, app launcher, wallpaper picker, Bluetooth
+controls, calendar, and timer.
+
+## Explore
+
+- [`config/`](config/) — application and desktop configuration.
+- [`packages/`](packages/) — official and AUR package lists.
+- [`wallpapers/`](wallpapers/) — the wallpaper collection.
+
+<details>
+<summary>Setup notes</summary>
 
 Configuration lives under `config/`, linked from the matching path in `~/.config`.
 Code OSS links only `User/settings.json`; `session/theme-sync` links individual
@@ -29,30 +49,9 @@ ignored by Git. On a fresh setup, generate the palette with Quickshell/Matugen
 before starting GTK applications. GTK settings also use the local Quickshell-A/B
 theme wrappers, which must be installed under `~/.local/share/themes/`.
 
-## Screenshots
-
-### Desktop
-![Desktop](assets/home.png)
-
-### App launcher
-![App launcher](assets/app-launcher.png)
-
-### Wallpaper picker
-![Wallpaper picker](assets/wallpaper-picker.png)
-
-### Bluetooth
-![Bluetooth controls](assets/bluetooth.png)
-
-### Calendar
-![Calendar](assets/calendar.png)
-
-### Timer
-![Timer](assets/timer.png)
-
-### Yazi
-![Yazi file manager](assets/yazi.png)
+</details>
 
 ## Credits
 
-Reference: [fedyaqq34356/hyprdots](https://github.com/fedyaqq34356/hyprdots/tree/main).
-Quickshell panel components are adapted from hyprdots;
+Inspired by [fedyaqq34356/hyprdots](https://github.com/fedyaqq34356/hyprdots).
+Quickshell panel components are adapted from that project.
