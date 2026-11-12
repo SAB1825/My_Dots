@@ -10,7 +10,6 @@ import shutil
 import subprocess
 
 ROOT = Path(__file__).resolve().parent
-SHELL = ROOT
 HOME = Path.home()
 CONFIG = Path(os.environ.get('XDG_CONFIG_HOME', HOME / '.config'))
 HYPR = CONFIG / 'hypr'

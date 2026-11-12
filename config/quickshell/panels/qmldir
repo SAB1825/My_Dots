@@ -13,7 +13,6 @@ PowerMenu PowerMenu.qml
 SysRings SysRings.qml
 TimerPanel TimerPanel.qml
 WallpaperPicker WallpaperPicker.qml
-SettingsChoice SettingsChoice.qml
 LauncherDrip LauncherDrip.qml
 ClipDrip ClipDrip.qml
 BatteryPanel BatteryPanel.qml
