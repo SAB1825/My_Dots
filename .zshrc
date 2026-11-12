@@ -88,6 +88,10 @@ alias ports='ss -tulpn'
 alias update='sudo pacman -Syu'
 alias install='sudo pacman -S'
 alias remove='sudo pacman -Rns'
+alias ff='fastfetch'
+if command -v fastfetch >/dev/null 2>&1; then
+  alias fastfetch='command clear && fastfetch'
+fi
 
 # Nicer alternatives, used only if installed
 if (( $+commands[eza] )); then
