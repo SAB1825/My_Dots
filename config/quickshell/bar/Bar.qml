@@ -104,6 +104,7 @@ Scope {
                 z: 300
 
                 HoverHandler {
+                    blocking: false
                     onHoveredChanged: win.peeking = hovered
                 }
             }
@@ -201,6 +202,7 @@ Scope {
                 }
 
                 HoverHandler {
+                    blocking: false
                     onHoveredChanged: {
                         island.hovered = hovered;
                         if (!island.blobField)

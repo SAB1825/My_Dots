@@ -253,20 +253,21 @@ Item {
                 spacing: 7
 
                 Repeater {
-                    model: Hyprland.workspaces
+                    model: 5
 
                     Rectangle {
                         id: wsDot
-                        required property var modelData
+                        required property int index
+                        readonly property int workspaceId: index + 1
                         readonly property bool isActive:
                             Hyprland.focusedWorkspace
-                            && Hyprland.focusedWorkspace.id === modelData.id
+                            && Hyprland.focusedWorkspace.id === workspaceId
 
                         readonly property bool hasApp:
-                            Running.onWorkspace(modelData.id)
+                            Running.onWorkspace(workspaceId)
 
-                        width: isActive ? 24 : 7
-                        height: 7
+                        width: 7
+                        height: isActive ? 24 : 14
                         radius: 4
                         color: isActive ? Colors.accent
                              : hasApp ? Colors.accentAlt
@@ -274,7 +275,7 @@ Item {
                                        Colors.fgDim.b, 0.30)
                         anchors.verticalCenter: parent.verticalCenter
 
-                        Behavior on width {
+                        Behavior on height {
                             NumberAnimation {
                                 duration: Motion.slow
                                 easing.type: Easing.Bezier
@@ -327,7 +328,7 @@ Item {
                             cursorShape: Qt.PointingHandCursor
                             onClicked: {
                                 Sfx.pick();
-                                Quickshell.execDetached(["hyprdo", "dispatch", "workspace", String(modelData.id)]);
+                                Quickshell.execDetached(["hyprdo", "dispatch", "workspace", String(wsDot.workspaceId)]);
                             }
                         }
                     }
