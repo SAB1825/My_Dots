@@ -7,12 +7,15 @@ import "root:/services"
 Singleton {
     id: root
 
-    readonly property string display: Prefs.apple ? "SF Pro Display" : Prefs.fontDisplay
-    readonly property string mono: Prefs.apple ? "SF Pro Display" : "JetBrainsMono Nerd Font"
+    readonly property string display: Prefs.fontDisplay
+    readonly property string body: Prefs.fontBody
+    // Legacy body-font name used throughout existing UI components.
+    readonly property string mono: root.body
     readonly property string glyph: "JetBrainsMono Nerd Font"
 
     readonly property var displayChoices: [
         { value: "Adwaita Sans",  label: "adwaita" },
+        { value: "SF Compact Display", label: "sf compact" },
         { value: "SF Pro Display", label: "sf pro" },
         { value: "JetBrainsMono Nerd Font", label: "mono only" }
     ]

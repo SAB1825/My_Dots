@@ -13,6 +13,7 @@ Singleton {
     readonly property string notifySound: adapter.notifySound
     readonly property string language: adapter.language
     readonly property string fontDisplay: adapter.fontDisplay
+    readonly property string fontBody: adapter.fontBody
     readonly property string design: adapter.design === undefined ? "native" : adapter.design
     readonly property bool apple: root.design === "apple"
     readonly property string weatherPlace: adapter.weatherPlace
@@ -92,7 +93,8 @@ Singleton {
             property real sfxVolume: 0.55
             property string notifySound: "Sine"
             property string language: "en"
-            property string fontDisplay: "Adwaita Sans"
+            property string fontDisplay: "JetBrainsMono Nerd Font"
+            property string fontBody: "JetBrainsMono Nerd Font"
             property string design: "native"
             property string weatherPlace: ""
             property bool weatherEnabled: true
