@@ -24,3 +24,8 @@ post_hook = 'pkill -USR1 -u "$(id -u)" -x kitty || true'
 input_path = "~/.config/session/theme-sync/gtk-colors.css"
 output_path = "~/.config/session/theme-sync/generated.css"
 post_hook = 'python3 "$HOME/.config/session/theme-sync/reload-gtk.py"'
+
+[templates.brave]
+input_path = "~/.config/session/brave-theme/palette.json.template"
+output_path = "~/.config/session/brave-theme/palette.json"
+post_hook = 'python3 "$HOME/.config/session/brave-theme/generate.py"'

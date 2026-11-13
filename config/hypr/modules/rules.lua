@@ -24,6 +24,16 @@ hl.window_rule({
     no_focus = true,
 })
 
+-- Open Dolphin in a compact, centered floating window.
+hl.window_rule({
+    name  = "dolphin-floating",
+    match = { class = "^(org\\.kde\\.dolphin|dolphin)$" },
+
+    float  = true,
+    size   = "900 600",
+    center = true,
+})
+
 -- Hyprland-run.
 hl.window_rule({
     name  = "move-hyprland-run",
