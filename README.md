@@ -34,7 +34,10 @@ controls, calendar, and timer.
 
 Configuration lives under `config/`, linked from the matching path in `~/.config`.
 Code OSS links only `User/settings.json`; `session/theme-sync` links individual
-templates and helpers so session state stays outside the repository. Original
+templates and helpers so session state stays outside the repository.
+Link `session/brave-theme` as a directory to enable the Matugen Brave theme.
+Tmux plugins are Git submodules; run `git submodule update --init --recursive`
+after cloning to populate them. Original
 files replaced during this import are retained in `~/.config/dotfiles-backups/`.
 
 `~/Pictures/Wallpapers` points to this repository's `wallpapers/` directory. Images

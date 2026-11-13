@@ -1,0 +1,35 @@
+[submodule "config/tmux/.tmux/plugins/tmux"]
+	path = config/tmux/.tmux/plugins/tmux
+	url = https://git::@github.com/catppuccin/tmux
+
+[submodule "config/tmux/.tmux/plugins/tmux-battery"]
+	path = config/tmux/.tmux/plugins/tmux-battery
+	url = https://git::@github.com/tmux-plugins/tmux-battery
+
+[submodule "config/tmux/.tmux/plugins/tmux-continuum"]
+	path = config/tmux/.tmux/plugins/tmux-continuum
+	url = https://git::@github.com/tmux-plugins/tmux-continuum
+
+[submodule "config/tmux/.tmux/plugins/tmux-cpu"]
+	path = config/tmux/.tmux/plugins/tmux-cpu
+	url = https://git::@github.com/tmux-plugins/tmux-cpu
+
+[submodule "config/tmux/.tmux/plugins/tmux-online-status"]
+	path = config/tmux/.tmux/plugins/tmux-online-status
+	url = https://git::@github.com/tmux-plugins/tmux-online-status
+
+[submodule "config/tmux/.tmux/plugins/tmux-resurrect"]
+	path = config/tmux/.tmux/plugins/tmux-resurrect
+	url = https://git::@github.com/tmux-plugins/tmux-resurrect
+
+[submodule "config/tmux/.tmux/plugins/tmux-sessionx"]
+	path = config/tmux/.tmux/plugins/tmux-sessionx
+	url = https://git::@github.com/omerxx/tmux-sessionx
+
+[submodule "config/tmux/.tmux/plugins/tpm"]
+	path = config/tmux/.tmux/plugins/tpm
+	url = https://github.com/tmux-plugins/tpm
+
+[submodule "config/tmux/.tmux/plugins/vim-tmux-navigator"]
+	path = config/tmux/.tmux/plugins/vim-tmux-navigator
+	url = https://git::@github.com/christoomey/vim-tmux-navigator

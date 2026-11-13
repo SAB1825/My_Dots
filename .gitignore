@@ -25,3 +25,11 @@ backups/
 # Wallpaper-derived palettes; keep templates and reload helpers instead.
 /config/session/theme-sync/generated.css
 /config/session/theme-sync/Wallpaper.colors
+
+# Local configuration snapshots.
+*.before-*
+
+# Generated Brave theme state.
+/config/session/brave-theme/palette.json
+/config/session/brave-theme/current-background.txt
+/config/session/brave-theme/theme/
