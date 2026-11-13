@@ -1,3 +1,5 @@
+vim.pack.add({ "https://github.com/bluz71/vim-moonfly-colors" })
+
 -- Moonfly colorscheme
 vim.g.moonflyTransparent = true
 

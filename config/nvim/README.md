@@ -1,25 +1,35 @@
 # My Neovim Setup
 
-`init.lua` lists the modules in their loading order. Plugins are installed before
-their feature configurations, and the leader key is Space.
+The leader key is Space. `init.lua` loads `lua/sabari/init.lua`, which loads
+editor settings before the plugins.
 
 ## Configuration layout
 
-| Location | Purpose |
-| --- | --- |
-| `lua/config/options.lua` | Editor options and cursor shapes |
-| `lua/config/keymaps.lua` | General editing and navigation mappings |
-| `lua/config/autocmds.lua` | General editor events |
-| `lua/config/commands.lua` | Plugin management commands |
-| `lua/config/plugins.lua` | All plugin declarations |
-| `lua/features/` | One module per feature, including its keymaps |
+```text
+init.lua
+lua/sabari/
+├── init.lua
+├── core/
+│   ├── options.lua
+│   ├── keymaps.lua
+│   ├── commands.lua
+│   ├── autocmds.lua
+│   └── diagnostics.lua
+└── plugins/
+    ├── init.lua              -- explicit plugin loading order
+    ├── mini.lua              -- all Mini features and their mappings
+    ├── fff.lua               -- FFF search, mappings, and native build hook
+    └── ...                   -- one file per other plugin
+```
 
-Feature modules include Oil, MiniFiles, search, Git, completion, snippets,
-formatting, LSP, diagnostics, Trouble, Treesitter, Markdown, statusline, colors,
-icons, notifications, surround, and command-line UI.
+Each plugin file declares its package with `vim.pack.add` and contains its
+configuration and mappings. `plugins/init.lua` controls loading order.
+`plugins/mini.lua` groups icons, notifications, command line, file explorer,
+surround, Git signs, completion, and optional snippets. Snippets remain
+disabled; enable them with `enable_snippets` in that file.
 
-Use `features.oil` and other names under `features` for configuration modules.
-This prevents local files from shadowing plugin modules such as `oil`.
+Use names such as `sabari.plugins.oil` for configuration modules so they do not
+shadow plugin modules such as `oil`.
 
 ## Common mappings
 
@@ -27,9 +37,10 @@ This prevents local files from shadowing plugin modules such as `oil`.
 | --- | --- |
 | `Space o` / `Space e` | Open Oil (`q` closes it) |
 | `-` / `Space -` | Open MiniFiles |
-| `Space ff` | Find files |
-| `Space fg` | Grep the word under the cursor |
-| `Space fh` | Find help |
+| `Space ff` | Find files with FFF |
+| `Space fl` | Live fuzzy/plain grep with FFF |
+| `Space pgf` | Find files in Git root |
+| `Space pcf` | Find Neovim configuration files |
 | `Space f` | Format the current buffer |
 | `Space xx` / `Space xX` | Toggle workspace / current-buffer diagnostics |
 | `df` | Show line diagnostics |

@@ -1,3 +1,5 @@
+vim.pack.add({ "https://github.com/folke/trouble.nvim" })
+
 require("trouble").setup({
     focus = true,
     win = { position = "bottom", size = 0.3 },

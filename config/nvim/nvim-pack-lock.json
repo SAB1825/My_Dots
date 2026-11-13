@@ -8,6 +8,10 @@
       "rev": "016802de402556da54c36bd7359b441266b01cdd",
       "src": "https://github.com/stevearc/conform.nvim"
     },
+    "fff": {
+      "rev": "0ab67dc60a4c013f94ccb96dfe08dd6230e7f185",
+      "src": "https://github.com/dmtrKovalenko/fff"
+    },
     "friendly-snippets": {
       "rev": "b2ea5c41a150ba72fb656eedb4ed0a86d138d945",
       "src": "https://github.com/rafamadriz/friendly-snippets"

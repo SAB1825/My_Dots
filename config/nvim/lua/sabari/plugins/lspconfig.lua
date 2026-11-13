@@ -1,4 +1,4 @@
-require("mason").setup()
+vim.pack.add({ "https://github.com/neovim/nvim-lspconfig" })
 
 vim.keymap.set("n", "gd", vim.lsp.buf.definition, { desc = "Go to definition" })
 local capabilities = vim.lsp.protocol.make_client_capabilities()

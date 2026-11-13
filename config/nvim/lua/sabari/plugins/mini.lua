@@ -1,3 +1,59 @@
+vim.pack.add({
+    "https://github.com/nvim-mini/mini.nvim",
+    "https://github.com/rafamadriz/friendly-snippets",
+})
+
+-- Icons
+require("mini.icons").setup()
+
+-- Notifications
+require("mini.notify").setup({
+    -- only show messages
+    content = {
+        format = function(notif)
+            return notif.msg
+        end,
+    },
+})
+
+-- Command line
+require("vim._core.ui2").enable({})
+
+require("mini.cmdline").setup({
+    autocorrect = { enable = false },
+})
+
+vim.o.cmdheight = 0
+
+-- Files
+local MiniFiles = require("mini.files")
+MiniFiles.setup({
+    mappings = {
+        go_in = "<CR>",
+        go_in_plus = "L",
+        go_out = "_",
+        go_out_plus = "H",
+    },
+})
+
+vim.keymap.set("n", "-", "<cmd>lua MiniFiles.open()<CR>", { desc = "Toggle mini file explorer" })
+vim.keymap.set("n", "<leader>-", function()
+    MiniFiles.open(vim.api.nvim_buf_get_name(0), false)
+    MiniFiles.reveal_cwd()
+end, { desc = "Toggle into currently opened file" })
+
+-- Surround
+require("mini.surround").setup()
+
+-- sa: add, sd: delete, sr: replace, sf/sF: find, sh: highlight.
+
+-- Git signs
+local MiniDiff = require("mini.diff")
+MiniDiff.setup({
+    source = MiniDiff.gen_source.git({ index = false }),
+})
+
+-- Completion
 require("mini.completion").setup({
     lsp_completion = {
         auto_setup = true,
@@ -55,4 +111,16 @@ for _, key in ipairs({ "<Up>", "<Down>", "<Left>", "<Right>" }) do
     map_key(key, function()
         return vim.fn.pumvisible() == 1 and "<Ignore>" or key
     end, "Disable arrow navigation during completion")
+end
+
+-- Snippets remain disabled. Set this to true to enable them.
+local enable_snippets = false
+if enable_snippets then
+    local MiniSnippets = require("mini.snippets")
+    MiniSnippets.setup({
+        snippets = {
+            MiniSnippets.gen_loader.from_lang(), -- loads friendly-snippets
+        },
+    })
+    MiniSnippets.start_lsp_server({ match = false })
 end
