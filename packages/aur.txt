@@ -1,4 +1,0 @@
-brave-bin
-neovim-nightly-bin
-yay
-yay-debug

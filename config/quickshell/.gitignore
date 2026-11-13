@@ -1,2 +1,0 @@
-# Local Rust builds (setup.py uses build/ instead).
-/src/islandd/target/

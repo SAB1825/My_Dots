@@ -1,60 +1,53 @@
-<h1 align="center">Sabari’s dotfiles</h1>
+# Sabari’s dotfiles
 
-<p align="center">Arch Linux · Hyprland · Quickshell</p>
+Arch Linux · Niri · Kitty · Fish
 
-<p align="center">
-  <a href="https://youtu.be/_7CwLcyudi0">
-    <img src="https://img.youtube.com/vi/_7CwLcyudi0/hqdefault.jpg" alt="Watch the desktop showcase on YouTube" width="720">
-  </a>
-</p>
+A focused collection of desktop and terminal configuration.
 
-<p align="center"><a href="https://youtu.be/_7CwLcyudi0">▶ Watch the showcase</a></p>
-
-## The setup
-
-| Component | Tools |
+| Directory | Configuration |
 | --- | --- |
-| Desktop | Hyprland, Quickshell |
-| Terminal & shell | Kitty, Zsh |
-| Editor | Neovim, Code OSS |
-| System tools | Fastfetch, btop, Cava |
-| Theming | GTK, Matugen |
+| [`config/nvim`](config/nvim/) | Neovim |
+| [`config/tmux`](config/tmux/) | tmux, plugins, and wallpaper palette helper |
+| [`config/kitty`](config/kitty/) | Kitty appearance and transparency |
+| [`config/niri`](config/niri/) | Niri desktop and custom rules |
+| [`config/fish`](config/fish/) | Fish prompt, functions, and shell integration |
+| [`config/fastfetch`](config/fastfetch/) | Fastfetch layout and image |
 
-Quickshell brings together the bar, app launcher, wallpaper picker, Bluetooth
-controls, calendar, and timer.
+The root [`.zshrc`](.zshrc) preserves the previous Zsh setup.
+[`wallpapers/`](wallpapers/) contains the wallpaper collection.
+Package lists and showcase assets are omitted for now.
 
-## Explore
+## Setup
 
-- [`config/`](config/) — application and desktop configuration.
-- [`packages/`](packages/) — official and AUR package lists.
-- [`wallpapers/`](wallpapers/) — the wallpaper collection.
+Back up existing configuration before copying or linking individual directories
+from `config/` into `~/.config/`. Install the corresponding applications separately.
 
-<details>
-<summary>Setup notes</summary>
+Initialize tmux plugin submodules after cloning:
 
-Configuration lives under `config/`, linked from the matching path in `~/.config`.
-Code OSS links only `User/settings.json`; `session/theme-sync` links individual
-templates and helpers so session state stays outside the repository.
-Link `session/brave-theme` as a directory to enable the Matugen Brave theme.
-Tmux plugins are Git submodules; run `git submodule update --init --recursive`
-after cloning to populate them. Original
-files replaced during this import are retained in `~/.config/dotfiles-backups/`.
+```sh
+git submodule update --init --recursive
+```
 
-`~/Pictures/Wallpapers` points to this repository's `wallpapers/` directory. Images
-added through either path appear in the repository automatically; commit and push
-them to save them in Git. On a fresh setup, link it with
-`ln -s "$(pwd)/wallpapers" ~/Pictures/Wallpapers` from the repository root, after
-moving any existing wallpaper folder aside.
+tmux uses the backtick prefix. Some optional shortcuts need additional tools
+such as sesh, fzf, gum, yazi, lazygit, and rmpc. The sessionizer shortcut expects
+`~/scripts/tmux-sessionizer.sh`.
 
-Wallpaper theme sources are in `config/session/theme-sync/`. Matugen writes
-`generated.css` and `Wallpaper.colors` there at runtime; these palettes are
-ignored by Git. On a fresh setup, generate the palette with Quickshell/Matugen
-before starting GTK applications. GTK settings also use the local Quickshell-A/B
-theme wrappers, which must be installed under `~/.local/share/themes/`.
+## Desktop integration
 
-</details>
+The current desktop uses [DarkShadow’s Shell](https://github.com/shadowww-dev/DarkShadowShell),
+installed separately. Its Quickshell source and generated `rice/` settings are
+not included here. Niri’s configuration and Fish integrations reference helpers
+from that installation; these are personal configurations, not a standalone
+installer for the shell.
 
-## Credits
+DarkShadow’s Shell generates `config/niri/config.kdl`. Put persistent custom Niri
+rules in `config/niri/user.kdl`. Use the shell’s settings for blur and generated
+desktop settings; its generator can replace the main Niri file.
 
-Inspired by [fedyaqq34356/hyprdots](https://github.com/fedyaqq34356/hyprdots).
-Quickshell panel components are adapted from that project.
+Kitty retains 92% background opacity. Niri provides background blur. The retained
+Kitty configuration launches Zsh from `~/.config/zsh` when available, otherwise
+Bash; set `shell fish` in Kitty if you want Fish instead. For Zsh, copy the root
+`.zshrc` to `~/.config/zsh/.zshrc` or adjust Kitty’s shell command.
+
+tmux follows `~/.config/rice/palette.json` from the installed shell, with the old
+Matugen palette as a fallback. Built-in fallback colors work without either file.
