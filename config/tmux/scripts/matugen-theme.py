@@ -9,20 +9,31 @@ import subprocess
 
 
 def main():
+    config = Path(os.environ.get("XDG_CONFIG_HOME", str(Path.home() / ".config")))
     cache = Path(os.environ.get("XDG_CACHE_HOME", str(Path.home() / ".cache")))
-    try:
-        palette = json.loads((cache / "matugen/colors.json").read_text())
-        keys = {
+    sources = [
+        (config / "rice/palette.json", {
+            "bg": "surface", "surface": "surface_container", "fg": "on_surface",
+            "fg_dim": "on_surface_variant", "muted": "outline", "accent": "primary",
+            "accent_alt": "tertiary", "accent_text": "on_primary", "error": "error",
+        }),
+        (cache / "matugen/colors.json", {
             "bg": "bg", "surface": "bgAlt", "fg": "fg", "fg_dim": "fgDim",
             "muted": "outline", "accent": "accent", "accent_alt": "accentAlt",
             "accent_text": "accentText", "error": "bad",
-        }
-        colors = {name: palette[key] for name, key in keys.items()}
-        if not all(isinstance(c, str) and re.fullmatch(r"#[0-9a-fA-F]{6}", c)
-                   for c in colors.values()):
-            return
-    except (OSError, ValueError, KeyError, TypeError):
-        # Keep the last palette during regeneration or when no palette exists yet.
+        }),
+    ]
+    for path, keys in sources:
+        try:
+            palette = json.loads(path.read_text())
+            colors = {name: palette[key] for name, key in keys.items()}
+            if not all(isinstance(c, str) and re.fullmatch(r"#[0-9a-fA-F]{6}", c)
+                       for c in colors.values()):
+                continue
+            break
+        except (OSError, ValueError, KeyError, TypeError):
+            continue
+    else:
         return
 
     signature = ":".join(colors.values())
