@@ -1,0 +1,29 @@
+{
+    "workbench.statusBar.visible": false,
+    "window.customMenuBarAltFocus": false,
+    "window.enableMenuBarMnemonics": false,
+    "window.titleBarStyle": "native",
+    "workbench.productIconTheme": "material-product-icons",
+    "window.menuBarVisibility": "hidden",
+    "workbench.iconTheme": "material-icon-theme",
+    "workbench.colorTheme": "One Dark Pro Night Flat",
+    "editor.minimap.enabled": false,
+    "breadcrumbs.enabled": false,
+    "editor.fontFamily": "'JetBrainsMono Nerd Font', monospace",
+    "editor.stickyScroll.enabled": false,
+    "window.zoomLevel": 1,
+    "vim.handleKeys": {
+        "<C-b>": false
+    },
+    "editor.fontSize": 16,
+    "window.customTitleBarVisibility": "never",
+    "editor.padding.top": 20,
+    "editor.padding.bottom": 20,
+    "editor.smoothScrolling": true,
+    "editor.cursorSmoothCaretAnimation": "on",
+    "editor.cursorBlinking": "smooth",
+    "workbench.list.smoothScrolling": true,
+    "terminal.integrated.smoothScrolling": true,
+    "files.autoSave": "afterDelay",
+    "explorer.compactFolders": false
+}

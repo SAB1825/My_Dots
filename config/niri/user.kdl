@@ -1,8 +1,0 @@
-// Your own niri settings (DarkShadow's Shell never changes this file).
-// It is loaded after the shell's config, so whatever you set here wins.
-// Docs: https://niri-wm.github.io/niri/Configuration%3A-Introduction.html
-//
-// Examples:
-// input { keyboard { repeat-delay 300; repeat-rate 40; } }
-// binds { Mod+B { spawn "firefox"; } }
-// window-rule { match app-id="^steam$"; open-floating true; }

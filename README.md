@@ -1,15 +1,15 @@
 # Sabari’s dotfiles
 
-Arch Linux · Niri · Kitty · Fish
+Arch Linux · Kitty · Fish
 
 A focused collection of desktop and terminal configuration.
 
 | Directory | Configuration |
 | --- | --- |
 | [`config/nvim`](config/nvim/) | Neovim |
+| [`config/Code - OSS`](config/Code%20-%20OSS/) | Code - OSS / VSCodium user settings |
 | [`config/tmux`](config/tmux/) | tmux, plugins, and wallpaper palette helper |
 | [`config/kitty`](config/kitty/) | Kitty appearance and transparency |
-| [`config/niri`](config/niri/) | Niri desktop and custom rules |
 | [`config/fish`](config/fish/) | Fish prompt, functions, and shell integration |
 | [`config/fastfetch`](config/fastfetch/) | Fastfetch layout and image |
 
@@ -21,6 +21,10 @@ Package lists and showcase assets are omitted for now.
 
 Back up existing configuration before copying or linking individual directories
 from `config/` into `~/.config/`. Install the corresponding applications separately.
+
+Editor settings are saved from `~/.config/Code - OSS/User/settings.json`. For
+VSCodium installations using `~/.config/VSCodium/`, copy the saved `settings.json`
+into that directory’s `User/` folder instead.
 
 Initialize tmux plugin submodules after cloning:
 
@@ -36,15 +40,11 @@ such as sesh, fzf, gum, yazi, lazygit, and rmpc. The sessionizer shortcut expect
 
 The current desktop uses [DarkShadow’s Shell](https://github.com/shadowww-dev/DarkShadowShell),
 installed separately. Its Quickshell source and generated `rice/` settings are
-not included here. Niri’s configuration and Fish integrations reference helpers
+not included here. Fish integrations reference helpers
 from that installation; these are personal configurations, not a standalone
 installer for the shell.
 
-DarkShadow’s Shell generates `config/niri/config.kdl`. Put persistent custom Niri
-rules in `config/niri/user.kdl`. Use the shell’s settings for blur and generated
-desktop settings; its generator can replace the main Niri file.
-
-Kitty retains 92% background opacity. Niri provides background blur. The retained
+Kitty retains 92% background opacity. The retained
 Kitty configuration launches Zsh from `~/.config/zsh` when available, otherwise
 Bash; set `shell fish` in Kitty if you want Fish instead. For Zsh, copy the root
 `.zshrc` to `~/.config/zsh/.zshrc` or adjust Kitty’s shell command.
